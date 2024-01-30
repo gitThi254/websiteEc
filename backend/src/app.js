@@ -28,7 +28,6 @@ app.use(
       "http://localhost:5174",
       "https://website-ec-admin.vercel.app/",
     ],
-    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
 );
