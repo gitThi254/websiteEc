@@ -26,6 +26,8 @@ exports.login = asyncHandleError(async (req, res, next) => {
   console.log(token);
   res.cookie("token", token, {
     httpOnly: true,
+    secure: true,
+    sameSite: "none",
     maxAge: 72 * 60 * 60 * 1000,
   });
   res.json(user);
@@ -63,10 +65,6 @@ exports.verifyToken = asyncHandleError(async (req, res, next) => {
     return res.json(await user.populate("address.default.country_id"));
   });
 });
-
-function Test() {
-  return "hello world";
-}
 
 exports.getallUser = asyncHandleError(async (req, res, next) => {
   const { role, name } = req.query;
@@ -136,6 +134,7 @@ exports.loginAdmin = asyncHandleError(async (req, res, next) => {
     const token = await createAccessToken({ id: findAdmin?._id });
     res.cookie("token", token, {
       httpOnly: true,
+      secure: true,
       maxAge: 72 * 60 * 60 * 1000,
     });
     res.json(findAdmin);
