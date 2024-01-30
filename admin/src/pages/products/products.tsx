@@ -74,7 +74,7 @@ const Products = () => {
               </tr>
             </thead>
             <tbody>
-              {products?.map((item: any) => (
+              {products?.products?.map((item: any) => (
                 <tr key={item._id}>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">

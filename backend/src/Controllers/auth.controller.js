@@ -135,6 +135,7 @@ exports.loginAdmin = asyncHandleError(async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
+      sameSite: "none",
       maxAge: 72 * 60 * 60 * 1000,
     });
     res.json(findAdmin);
