@@ -26,7 +26,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://website-ec-admin.vercel.app/",
+      "https://website-ec-admin.vercel.app",
     ],
     credentials: true,
   })
@@ -39,7 +39,6 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: false,
-      httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
