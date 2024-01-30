@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import ListBlogs from "../../components/ListBlogs";
 import { useBlogs } from "../../hooks/blog.hook";
 
 const Blog = () => {

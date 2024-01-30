@@ -13,7 +13,4 @@ export const getUsersReq = async () =>
     return res.data;
   });
 
-export const logoutReq = async () =>
-  axios.post("/users/logout").catch((err) => {
-    console.log("error");
-  });
+export const logoutReq = async () => axios.post("/users/logout");

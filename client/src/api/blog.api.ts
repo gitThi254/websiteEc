@@ -1,4 +1,3 @@
-import { IdentificationIcon } from "@heroicons/react/16/solid";
 import axios from "./axios";
 export const blogsReq = async () => axios.get("/blogs").then((res) => res.data);
 export const blogReq = async (id?: string) =>

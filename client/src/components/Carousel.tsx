@@ -4,7 +4,7 @@ import "react-multi-carousel/lib/styles.css";
 import { Link } from "react-router-dom";
 
 const CarouselHome = () => {
-  const { data: blogs, isPending } = useBlogs();
+  const { data: blogs } = useBlogs();
   const breakPoints = [
     { width: 500, itemsToShow: 1 },
     { width: 768, itemsToShow: 2 },

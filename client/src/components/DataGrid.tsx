@@ -1,5 +1,4 @@
 import { useState } from "react";
-import image from "../images/iphone-1.jpg";
 import { useProducts } from "../hooks/product.hook";
 import Loader from "../common/Loader";
 import { Link, useSearchParams } from "react-router-dom";

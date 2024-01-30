@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function ProductBlog(props: any) {
   return (
     <div className="card">

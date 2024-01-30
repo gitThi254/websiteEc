@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import "./App.css";
 import Loader from "./common/Loader";
 import { Toaster } from "react-hot-toast";

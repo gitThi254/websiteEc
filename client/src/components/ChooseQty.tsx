@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUpdateCart } from "../hooks/cart.hook";
 
 const ChooseQty = ({ id, qty }: { id: string; qty: number }) => {
