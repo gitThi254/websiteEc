@@ -28,7 +28,7 @@ app.use(
       "http://localhost:5174",
       "https://website-ec-admin.vercel.app",
     ],
-    credentials: true,
+    credentials: "include",
   })
 );
 
