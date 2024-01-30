@@ -26,8 +26,9 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://website-ec-admin.vercel.app",
+      "https://website-ec-admin.vercel.app/",
     ],
+    methods: ["POSTGET"],
     credentials: true,
   })
 );
