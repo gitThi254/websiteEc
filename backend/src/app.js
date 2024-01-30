@@ -28,7 +28,7 @@ app.use(
       "http://localhost:5174",
       "https://website-ec-admin.vercel.app",
     ],
-    credentials: "include",
+    credentials: true,
   })
 );
 
@@ -38,7 +38,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
+      secure: false,
+      httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
