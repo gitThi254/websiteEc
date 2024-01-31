@@ -27,6 +27,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "https://website-ec-admin.vercel.app",
+      "https://client-web-one.vercel.app",
     ],
     credentials: true,
   })
