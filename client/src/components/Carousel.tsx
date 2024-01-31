@@ -1,7 +1,4 @@
-import Carousel from "react-elastic-carousel";
 import { useBlogs } from "../hooks/blog.hook";
-import "react-multi-carousel/lib/styles.css";
-import { Link } from "react-router-dom";
 
 const CarouselHome = () => {
   const { data: blogs } = useBlogs();
@@ -14,7 +11,8 @@ const CarouselHome = () => {
   return (
     <>
       <div>
-        <Carousel breakPoints={breakPoints}>
+        hello
+        {/* <Carousel breakPoints={breakPoints}>
           {blogs?.map((item: any) => (
             <Link
               to={`/blog/${item._id}`}
@@ -24,7 +22,7 @@ const CarouselHome = () => {
               <img src={item.images[0].url} />
             </Link>
           ))}
-        </Carousel>
+        </Carousel> */}
       </div>
     </>
   );
