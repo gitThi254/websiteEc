@@ -46,6 +46,7 @@ exports.logout = asyncHandleError(async (req, res, next) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,
+      sameSite: "none",
     });
     return res.sendStatus(204);
   });
