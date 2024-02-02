@@ -7,6 +7,7 @@ import Loader_image from '../../common/Loader_image';
 import Search from '../../components/btn/Search';
 import { useCategories } from '../../hooks/category.hook';
 import SelectProduct from '../../components/btn/SelectProduct';
+import Meta from '../../components/Meta/Meta';
 
 const Blogs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,7 +18,7 @@ const Blogs = () => {
 
   return (
     <>
-      <Breadcrumb pageName={`blogs list`} />
+      <Meta title="Bài viết" />
       <Search url="blogs/list" />
       <SelectProduct method={category} />
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -42,34 +43,34 @@ const Blogs = () => {
                 />
               </svg>
             </span>
-            Create blog
+            Tạo bài viết
           </Link>
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
                 <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                  title
+                  Tiêu đề
                 </th>
                 <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white">
-                  Date of creation
+                  Ngày tạo
                 </th>
-                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Description
+                <th className="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white">
+                  Miêu tả
                 </th>
                 <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white">
-                  Category
+                  Mục sản phẩm
                 </th>
-                <th className="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white">
+                <th className="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white">
                   Views-likes-dislikes
                 </th>
                 <th className="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white">
-                  Author
+                  Tác giả
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Image
+                  Hình ảnh
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Actions
+                  Hành động
                 </th>
               </tr>
             </thead>
@@ -77,7 +78,7 @@ const Blogs = () => {
               {blogs?.map((item: any) => (
                 <tr key={item._id}>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                    <h5 className="font-medium text-black dark:text-white">
+                    <h5 className="font-medium text-black dark:text-white line-clamp-3">
                       {item?.title}
                     </h5>
                   </td>
@@ -87,7 +88,7 @@ const Blogs = () => {
                       {new Date(item?.createdAt).toLocaleString()}
                     </p>
                   </td>
-                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 line-clamp-4">
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 line-clamp-4 h-[150px]">
                     <h5 className="font-medium text-black dark:text-white">
                       {item?.description}
                     </h5>

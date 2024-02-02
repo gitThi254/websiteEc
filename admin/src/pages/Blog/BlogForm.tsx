@@ -54,13 +54,8 @@ const BlogForm = ({ categories, blog }: { categories: any; blog?: any }) => {
   }, []);
   return (
     <>
-      <Breadcrumb pageName={`blog form ${location}`} />
-
       <div className="grid grid-cols-1 border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <Link
-          to="/blogs/list"
-          className="inline-flex hover:underline m-7 gap-2"
-        >
+        <Link to="/blogs" className="inline-flex hover:underline m-7 gap-2">
           <span>
             <svg
               xmlns="http://www.w3.org/2000/svg"

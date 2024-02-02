@@ -38,7 +38,7 @@ type ProductItemForm = {
   qty_in_stock: number;
   product_image: any;
   price: number;
-  variation_option_id: Array;
+  variation_option_id?: Array;
 };
 
 type PromotionForm = {

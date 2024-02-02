@@ -1,21 +1,24 @@
-import React from 'react';
-import VariationForm from './VariationForm';
-import { useCategories, useVariation } from '../../hooks/category.hook';
-import { useLocation, useParams } from 'react-router-dom';
+import { useVariation } from '../../hooks/category.hook';
+import { useParams } from 'react-router-dom';
 import Loader from '../../common/Loader';
+import ModelVariation from './ModelVariation';
 
-const VariationReq = () => {
-  const { id } = useParams();
-  const location = useLocation().pathname.split('/')[2];
-  const { data: variation, isPending } = useVariation(id);
-  const { data: categories, isPending: pending } = useCategories();
-  if ((location === 'edit' && isPending) || pending) return <Loader />;
+const VariationReq = ({ open, setOpen }: { open: any; setOpen: any }) => {
+  const { id, variation_id } = useParams();
+  const { data: variation, isPending } = useVariation(id, variation_id);
+  if (isPending) return <Loader />;
   return (
     <>
-      {variation ? (
-        <VariationForm variation={variation} categories={categories} />
-      ) : (
-        <VariationForm categories={categories} />
+      {variation && (
+        <ModelVariation
+          title="Form cập nhật Lựa chọn"
+          description="Vui lòng diền vào form này!"
+          open={open}
+          setOpen={setOpen}
+          button="Cập nhật lựa chọn"
+          category_id={id}
+          data={variation}
+        />
       )}
     </>
   );

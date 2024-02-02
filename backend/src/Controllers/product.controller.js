@@ -6,6 +6,7 @@ const ProductItem = require("../Models/product_item.model");
 const VariationOption = require("../Models/variation_option.model");
 const asyncHandleError = require("../Utils/asyncHandleError");
 const removeVietnameseTones = require("../Libs/removeVietnameseTones");
+const OrderLine = require("../Models/order_line");
 
 // db.product_items.aggregate([{$group: {_id: "$product_id", min: {$min: "$price"}, max: {$max: "$price"}}}])
 
@@ -17,6 +18,79 @@ exports.createProduct = asyncHandleError(async (req, res, next) => {
   }
   const newProduct = await Product.create(data);
   return res.status(201).json(newProduct);
+});
+
+exports.TopfiveProductBestSell = asyncHandleError(async (req, res, next) => {
+  const products = await OrderLine.aggregate([
+    {
+      $group: {
+        _id: {
+          product_item_id: "$product_item_id",
+        },
+        sumProductItemselled: { $sum: "$qty" },
+      },
+    },
+    {
+      $project: {
+        product_item_id: "$_id.product_item_id",
+        sumProductItemselled: 1,
+        _id: 0,
+      },
+    },
+    {
+      $lookup: {
+        from: "product_items",
+        localField: "product_item_id",
+        foreignField: "_id",
+        as: "product_items",
+      },
+    },
+    {
+      $unwind: "$product_items",
+    },
+    {
+      $addFields: {
+        product_id: "$product_items.product_id",
+      },
+    },
+    {
+      $group: {
+        _id: {
+          product_id: "$product_id",
+        },
+        sumProductselled: { $sum: "$sumProductItemselled" },
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id.product_id",
+        foreignField: "_id",
+        as: "products",
+      },
+    },
+    {
+      $unwind: "$products",
+    },
+    {
+      $project: {
+        sumProductselled: 1,
+        name: "$products.name",
+        description: "$products.description",
+        images: "$products.product_image",
+      },
+    },
+    {
+      $sort: {
+        sumProductselled: -1,
+        name: -1,
+      },
+    },
+    {
+      $limit: 4,
+    },
+  ]);
+  res.json(products);
 });
 
 exports.getProducts = asyncHandleError(async (req, res, next) => {
@@ -110,11 +184,115 @@ exports.getProducts = asyncHandleError(async (req, res, next) => {
       $limit: 6,
     },
   ]);
+
   const totalPage = await Product.countDocuments({
     nameSearch: {
       $regex: `.*${search ? search : ""}.*`,
       $options: "i",
     },
+    ...(category ? { category_id: new mongoose.Types.ObjectId(category) } : {}),
+  });
+  res.json({ products, totalPage });
+});
+
+exports.getProductsClient = asyncHandleError(async (req, res, next) => {
+  const { name, category, price, page } = req.query;
+  console.log({ name, category, price, page });
+  const search = name ? removeVietnameseTones(name) : undefined;
+  const products = await Product.aggregate([
+    {
+      $lookup: {
+        from: "product_items",
+        localField: "_id",
+        foreignField: "product_id",
+        as: "product_items",
+      },
+    },
+    {
+      $lookup: {
+        from: "categories",
+        localField: "category_id",
+        foreignField: "_id",
+        as: "category_id",
+      },
+    },
+    {
+      $unwind: "$product_items",
+    },
+    {
+      $group: {
+        _id: {
+          id: "$_id",
+          name: "$name",
+          description: "$description",
+          image: "$product_image",
+          category: "$category_id",
+          search: "$nameSearch",
+          createdAt: "$createdAt",
+          updatedAt: "$updatedAt",
+        },
+        minPrice: { $min: "$product_items.price" },
+        maxPrice: { $max: "$product_items.price" },
+        sumProducts: { $sum: "$product_items.qty_in_stock" },
+      },
+    },
+    {
+      $project: {
+        id: "$_id.id",
+        name: "$_id.name",
+        description: "$_id.description",
+        image: "$_id.image",
+        search: "$_id.search",
+        category: "$_id.category",
+        updatedAt: "$_id.updatedAt",
+        createdAt: "$_id.createdAt",
+        min: "$minPrice",
+        max: "$maxPrice",
+        count: "$sumProducts",
+        _id: null,
+      },
+    },
+
+    {
+      $addFields: {
+        category_id: "$category._id",
+      },
+    },
+    {
+      $unwind: "$category_id",
+    },
+    {
+      $match: {
+        search: {
+          $regex: `.*${search ? search : ""}.*`,
+          $options: "i",
+        },
+      },
+    },
+    {
+      $match: category
+        ? {
+            category_id: new mongoose.Types.ObjectId(category),
+          }
+        : {},
+    },
+    {
+      $sort: price ? { min: Number(price) } : { createdAt: -1 },
+    },
+    {
+      $skip: (Number(page ? page : 1) - 1) * 6,
+    },
+    {
+      $limit: 6,
+    },
+  ]);
+
+  const totalPage = await Product.countDocuments({
+    nameSearch: {
+      $regex: `.*${search ? search : ""}.*`,
+      $options: "i",
+    },
+    ...(category ? { category_id: new mongoose.Types.ObjectId(category) } : {}),
   });
   res.json({ products, totalPage });
 });
@@ -375,6 +553,7 @@ exports.getProductItem = asyncHandleError(async (req, res, next) => {
 exports.updateProductItem = asyncHandleError(async (req, res, next) => {
   const { id } = req.params;
   const data = req.body;
+  console.log(data);
   const product = await ProductItem.findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,

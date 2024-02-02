@@ -15,6 +15,9 @@ const {
   createAddress,
   getCountries,
   getAddresses,
+  getAddress,
+  updateAddress,
+  deleteAddress,
 } = require("../Controllers/auth.controller");
 const { authRequired, isAdmin } = require("../Middlewares/auth.middleware");
 
@@ -29,6 +32,12 @@ router.get("/addresses", authRequired, getAddresses);
 router.get("/all-users", authRequired, isAdmin, getallUser);
 
 router.route("/address").post(authRequired, createAddress);
+router
+  .route("/address/:id")
+  .get(authRequired, getAddress)
+  .put(authRequired, updateAddress)
+  .delete(authRequired, deleteAddress);
+
 router.route("/country").post(authRequired, isAdmin, createCountry);
 
 router

@@ -1,5 +1,6 @@
 import Loader from '../common/Loader';
 import Breadcrumb from '../components/Breadcrumb';
+import Meta from '../components/Meta/Meta';
 import { useVerify } from '../hooks/auth.hook';
 import CoverOne from '../images/cover/cover-01.png';
 import userSix from '../images/user/user-06.png';
@@ -9,6 +10,7 @@ const Profile = () => {
   if (isPending) return <Loader />;
   return (
     <>
+      <Meta title="Hồ sơ" />
       <Breadcrumb pageName="Profile" />
 
       <div className="overflow-hidden rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">

@@ -4,25 +4,17 @@ const Variations = lazy(() => import('../pages/Variations/Variations'));
 const VariationOptions = lazy(
   () => import('../pages/VariationOptions/VariationOptions'),
 );
-const VariationOptionForm = lazy(
-  () => import('../pages/VariationOptions/VariationOptionForm'),
-);
 const Products = lazy(() => import('../pages/products/products'));
 const ProductItemForm = lazy(
   () => import('../pages/product-items/ProductItemForm'),
 );
-const ProductItems = lazy(() => import('../pages/product-items/ProductItems'));
 const Users = lazy(() => import('../pages/Users/Users'));
 const UserForm = lazy(() => import('../pages/Users/UserForm'));
 const Product = lazy(() => import('../pages/products/product'));
 const Promotions = lazy(() => import('../pages/Promotion/Promotions'));
 const Orders = lazy(() => import('../pages/Orders/Orders'));
 const OrderItem = lazy(() => import('../pages/Orders/OrderItem'));
-const CategoriesReq = lazy(() => import('../pages/Categories/CategoriesReq'));
-const VariationReq = lazy(() => import('../pages/Variations/VariationReq'));
-const VariationOptionReq = lazy(
-  () => import('../pages/VariationOptions/VariationOptionReq'),
-);
+
 const ProductReq = lazy(() => import('../pages/products/productReq'));
 const ProductItemReq = lazy(
   () => import('../pages/product-items/ProductItemReq'),
@@ -42,7 +34,6 @@ const Tables = lazy(() => import('../pages/Tables'));
 const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
 const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Categories = lazy(() => import('../pages/Categories/Categories'));
-const CategoryForm = lazy(() => import('../pages/Categories/CategoryForm'));
 
 const coreRoutes = [
   {
@@ -61,22 +52,17 @@ const coreRoutes = [
     component: Test,
   },
   {
-    path: '/categories/list',
+    path: '/categories',
     title: 'forms category',
     component: Categories,
   },
   {
-    path: '/categories/create',
+    path: '/categories/:id',
     title: 'forms category',
-    component: CategoryForm,
+    component: Categories,
   },
   {
-    path: '/categories/edit/:id',
-    title: 'forms category',
-    component: CategoriesReq,
-  },
-  {
-    path: '/blogs/list',
+    path: '/blogs',
     title: 'forms category',
     component: Blogs,
   },
@@ -96,37 +82,27 @@ const coreRoutes = [
     component: BlogReq,
   },
   {
-    path: '/variations/list',
+    path: '/categories/:id/variations',
     title: 'forms category',
     component: Variations,
   },
   {
-    path: '/variations/create',
+    path: '/categories/:id/variations/:variation_id',
     title: 'forms category',
-    component: VariationReq,
+    component: Variations,
   },
   {
-    path: '/variations/edit/:id',
-    title: 'forms category',
-    component: VariationReq,
-  },
-  {
-    path: '/variations/option/list/:id',
+    path: '/categories/:id/variations/:variation_id/options',
     title: 'forms category',
     component: VariationOptions,
   },
   {
-    path: '/variations/option/create/:id',
+    path: '/categories/:id/variations/:variation_id/options/:option_id',
     title: 'forms category',
-    component: VariationOptionForm,
+    component: VariationOptions,
   },
   {
-    path: '/variations/option/edit/:id',
-    title: 'forms category',
-    component: VariationOptionReq,
-  },
-  {
-    path: '/products/list',
+    path: '/products',
     title: 'forms category',
     component: Products,
   },
@@ -140,33 +116,33 @@ const coreRoutes = [
     title: 'forms category',
     component: ProductReq,
   },
+  // {
+  //   path: '/products/:id',
+  //   title: 'forms category',
+  //   component: ProductItems,
+  // },
   {
-    path: '/products/item/list/:id',
-    title: 'forms category',
-    component: ProductItems,
-  },
-  {
-    path: '/products/item/create/:id',
-    title: 'forms category',
-    component: ProductItemForm,
-  },
-  {
-    path: '/products/item/:id',
+    path: '/products/:id/product_items/create',
     title: 'forms category',
     component: ProductItemForm,
   },
   {
-    path: '/products/item/edit/:id',
+    path: '/products/:id/product_items/edit/:product_item_id',
     title: 'forms category',
     component: ProductItemReq,
   },
   {
-    path: '/products/list/:id',
+    path: '/products/edit/:id',
+    title: 'forms category',
+    component: ProductItemReq,
+  },
+  {
+    path: '/products/:id',
     title: 'forms category',
     component: Product,
   },
   {
-    path: '/users/list',
+    path: '/users',
     title: 'forms category',
     component: Users,
   },
@@ -196,12 +172,12 @@ const coreRoutes = [
     component: PromotionReq,
   },
   {
-    path: '/orders/list',
+    path: '/orders',
     title: 'forms category',
     component: Orders,
   },
   {
-    path: '/orders/list/:id',
+    path: '/orders/:id',
     title: 'forms category',
     component: OrderReq,
   },

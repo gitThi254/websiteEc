@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '../../schemas/formSchema';
 import { useLogin } from '../../hooks/auth.hook';
+import Meta from '../../components/Meta/Meta';
 
 const SignIn = () => {
   const {
@@ -26,6 +27,7 @@ const SignIn = () => {
   };
   return (
     <>
+      <Meta title={'Đăng nhập'} />
       <div className="rounded-sm min-h-screen border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">

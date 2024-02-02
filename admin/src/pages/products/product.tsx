@@ -18,7 +18,7 @@ const Product = () => {
     <>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <Link
-          to={`/products/item/create/${params.id}`}
+          to={`/products/${params.id}/product_items/create`}
           className="inline-flex items-center justify-center gap-2.5 rounded-full bg-meta-3 mb-4 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
         >
           <span>
@@ -272,7 +272,7 @@ const Product = () => {
                         </svg>
                       </button>
                       <Link
-                        to={`/products/item/edit/${item._id}`}
+                        to={`/products/${id}/product_items/edit/${item._id}`}
                         className="hover:text-primary"
                       >
                         <svg

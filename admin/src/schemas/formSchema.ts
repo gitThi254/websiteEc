@@ -35,9 +35,18 @@ export const productItemSchema = Yup.object({
     .min(1, 'qty_in_stock > 1'),
   product_image: Yup.array().required('images is required'),
   price: Yup.number().required('price is required').min(1, 'Price > 1'),
-  variation_option_id: Yup.array().required('variation option required'),
+  variation_option_id: Yup.array().notRequired(),
 });
 
+export const productItemEditSchema = Yup.object({
+  product_id: Yup.string().required('Product is required'),
+  SKU: Yup.string(),
+  qty_in_stock: Yup.number()
+    .required('qty_in_stock is required')
+    .min(1, 'qty_in_stock > 1'),
+  product_image: Yup.array().required('images is required'),
+  price: Yup.number().required('price is required').min(1, 'Price > 1'),
+});
 export const PromotionSchema = Yup.object({
   name: Yup.string().required('name is required'),
   description: Yup.string().required('Description is required'),

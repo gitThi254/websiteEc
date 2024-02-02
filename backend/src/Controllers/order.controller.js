@@ -427,7 +427,7 @@ exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
       $unwind: "$shipping",
     },
     {
-      $unwind: "$address",
+      $unwind: { preserveNullAndEmptyArrays: true, path: "$address" },
     },
     {
       $unwind: "$payment_method",
@@ -562,6 +562,10 @@ exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
     {
       $sort: {
         order_date: -1,
+        fullname: -1,
+        order_total: 1,
+        shipping: 1,
+        _id: 1,
       },
     },
   ]);
@@ -647,7 +651,7 @@ exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
       $unwind: "$shipping",
     },
     {
-      $unwind: "$address",
+      $unwind: { preserveNullAndEmptyArrays: true, path: "$address" },
     },
     {
       $unwind: "$payment_method",
@@ -701,7 +705,10 @@ exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
         order_total: 1,
         user: 1,
         payment_method_name: "$payment_method.name",
-        address: "$address.city",
+        thanhPho: "$address.thanhPho",
+        huyen: "$address.huyen",
+        xa: "$address.xa",
+        diaChiCuThe: "$address.diaChiCuThe",
         shipping: "$shipping.name",
         shipping_price: "$shipping.price",
         status: "$status.status",
@@ -722,6 +729,10 @@ exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
           order_date: "$order_date",
           order_total: "$order_total",
           user: "$user",
+          thanhPho: "$thanhPho",
+          huyen: "$huyen",
+          xa: "$xa",
+          diaChiCuThe: "$diaChiCuThe",
           payment_method_name: "$payment_method_name",
           address: "$address",
           shipping: "$shipping",
@@ -748,6 +759,10 @@ exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
         order_date: "$_id.order_date",
         order_total: "$_id.order_total",
         user: "$_id.user",
+        thanhPho: "$_id.thanhPho",
+        huyen: "$_id.huyen",
+        xa: "$_id.xa",
+        diaChiCuThe: "$_id.diaChiCuThe",
         payment_method_name: "$_id.payment_method_name",
         address: "$_id.address",
         shipping: "$_id.shipping",

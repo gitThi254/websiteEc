@@ -15,9 +15,10 @@ exports.createVariation = asyncHandleError(async (req, res, next) => {
 
 exports.getVariations = asyncHandleError(async (req, res, next) => {
   const { id } = req.params;
-  const variations = await Variation.find(
-    id === undefined ? { category_id: id } : {}
-  ).populate("category_id");
+  console.log(id);
+  const variations = await Variation.find({ category_id: id })
+    .populate("category_id")
+    .sort("-createdAt");
 
   res.json(variations);
 });
@@ -92,7 +93,9 @@ exports.getVariationOptions = asyncHandleError(async (req, res, next) => {
   const { id } = req.params;
   const variationOptions = await VariationOption.find({
     variation_id: id,
-  }).populate("variation_id");
+  })
+    .populate("variation_id")
+    .sort("-createdAt");
   res.json(variationOptions);
 });
 

@@ -4,6 +4,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import SelectRole from '../../components/btn/SelectRole';
 import { useUsers } from '../../hooks/auth.hook';
 import Search from '../../components/btn/Search';
+import Meta from '../../components/Meta/Meta';
 
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,7 +12,7 @@ const Users = () => {
   if (isPending) return <Loader />;
   return (
     <>
-      <Breadcrumb pageName={`Users`} />
+      <Meta title="Khách hàng" />
       <Search url="users/list" />
       <SelectRole />
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -20,19 +21,19 @@ const Users = () => {
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
                 <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                  Full name
+                  Tên đầy đủ
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                   Email
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Phone
+                  Số Điện thoại
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Role
+                  Chức vụ
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Actions
+                  Hành động
                 </th>
               </tr>
             </thead>

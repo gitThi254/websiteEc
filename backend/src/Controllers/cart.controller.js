@@ -3,6 +3,7 @@ const Cart = require("../Models/cart.model");
 const CartItem = require("../Models/cart_item.model");
 const asyncHandleError = require("../Utils/asyncHandleError");
 const ProductItem = require("../Models/product_item.model");
+const { not_found } = require("../Errors/err_function");
 
 exports.createCart = asyncHandleError(async (req, res, next) => {
   const { _id } = req.user;
@@ -13,11 +14,6 @@ exports.createCart = asyncHandleError(async (req, res, next) => {
 exports.getCarts = asyncHandleError(async (req, res, next) => {
   const { _id } = req.user;
   const Carts = await Cart.find({ user_id: _id });
-  res.json(Carts);
-});
-
-exports.getCartOrder = asyncHandleError(async (req, res, next) => {
-  const Carts = await Cart.findById(["65a573bd4f8ac29a75711247"]);
   res.json(Carts);
 });
 
@@ -50,7 +46,15 @@ exports.updateCart = asyncHandleError(async (req, res, next) => {
   const { cartId } = req.params;
   const cartItem = req.body;
   const newCartItem = await CartItem.findByIdAndUpdate(cartId, cartItem);
-  return res.status(201).json(newCartItem);
+  if (!newCartItem) return next(not_found("cart", cartId));
+  return res.status(200).json(newCartItem);
+});
+
+exports.deleteCart = asyncHandleError(async (req, res, next) => {
+  const { cartId } = req.params;
+  const deleteCartItem = await CartItem.findByIdAndDelete(cartId);
+  if (!deleteCartItem) return next(not_found("cart", cartId));
+  return res.status(200).json(deleteCartItem);
 });
 
 exports.getCartItems = asyncHandleError(async (req, res, next) => {

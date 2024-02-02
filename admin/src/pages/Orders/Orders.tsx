@@ -10,6 +10,7 @@ import { useMethod, useOrders } from '../../hooks/order.hook';
 import Loader from '../../common/Loader';
 import SelectOrder from '../../components/btn/SelectOrder';
 import Search from '../../components/btn/Search';
+import Meta from '../../components/Meta/Meta';
 
 const Orders = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,8 +19,8 @@ const Orders = () => {
   if (isLoading || pending) return <Loader />;
   return (
     <>
-      <Breadcrumb pageName={`orders`} />
-      <Search url="orders/list" />
+      <Meta title="Đơn hàng" />
+      <Search url="orders" />
       <SelectOrder method={method} />
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="max-w-full overflow-x-auto">
@@ -27,28 +28,25 @@ const Orders = () => {
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                  Full name
+                  Tên đầy dủ
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Order of date
+                  Ngày tạo đơn
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Payment method
+                  Thanh toán
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Shipping address
+                  Phương thúc vận chuyển
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Shipping method
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  order_total
+                  Tổng số tiền
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                   order_status
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Actions
+                  Hành động
                 </th>
               </tr>
             </thead>
@@ -75,12 +73,6 @@ const Orders = () => {
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
                       {' '}
-                      {item?.address}
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">
-                      {' '}
                       {item?.shipping}
                     </p>
                   </td>
@@ -97,7 +89,7 @@ const Orders = () => {
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
                       <Link
-                        to={`/orders/list/${item._id}`}
+                        to={`/orders/${item._id}`}
                         className="hover:text-primary"
                       >
                         <svg

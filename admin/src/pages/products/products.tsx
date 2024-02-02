@@ -2,25 +2,22 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Loader from '../../common/Loader';
 import Breadcrumb from '../../components/Breadcrumb';
 import { useDeleteProduct, useProducts } from '../../hooks/product.hook';
-import { useEffect } from 'react';
 import Search from '../../components/btn/Search';
 import { useCategories } from '../../hooks/category.hook';
 import SelectProduct from '../../components/btn/SelectProduct';
+import Meta from '../../components/Meta/Meta';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: products, isLoading } = useProducts(searchParams);
   const { data: category, isPending } = useCategories();
-  const {
-    mutate: deleteProductMutation,
-    isPending: pending,
-    error,
-  } = useDeleteProduct();
+  const { mutate: deleteProductMutation, isPending: pending } =
+    useDeleteProduct();
   if (isLoading || pending || isPending) return <Loader />;
   return (
     <>
-      <Breadcrumb pageName={`products list`} />
-      <Search url="products/list" />
+      <Meta title="Sản phẩm" />
+      <Search url="products" />
       <SelectProduct method={category} />
 
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -45,37 +42,37 @@ const Products = () => {
                 />
               </svg>
             </span>
-            Add Products
+            Tạo sản phẩm
           </Link>
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
                 <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                  Name
+                  Tên sản phẩm
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Date of creation
+                  Ngày tạo
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Category
+                  Mục sản phẩm
                 </th>
                 <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
-                  Description
+                  Miêu tả
                 </th>
                 <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white">
-                  Count
+                  Số lượng
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Image
+                  Hình ảnh
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Actions
+                  Hàng động
                 </th>
               </tr>
             </thead>
             <tbody>
               {products?.products?.map((item: any) => (
-                <tr key={item._id}>
+                <tr key={item.id}>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {item?.name}
@@ -111,7 +108,7 @@ const Products = () => {
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
                       <Link
-                        to={`/products/list/${item.id}`}
+                        to={`/products/${item.id}`}
                         className="hover:text-primary"
                       >
                         <svg
@@ -134,7 +131,7 @@ const Products = () => {
                       </Link>
                       <button
                         className="hover:text-primary"
-                        onClick={() => deleteProductMutation(item._id)}
+                        onClick={() => deleteProductMutation(item.id)}
                       >
                         <svg
                           className="fill-current"
@@ -163,7 +160,7 @@ const Products = () => {
                         </svg>
                       </button>
                       <Link
-                        to={`/products/edit/${item._id}`}
+                        to={`/products/edit/${item.id}`}
                         className="hover:text-primary"
                       >
                         <svg

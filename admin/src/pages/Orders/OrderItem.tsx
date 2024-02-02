@@ -1,8 +1,5 @@
-import React from 'react';
-import { useMethod, useOrder, useUPdateOrder } from '../../hooks/order.hook';
-import Loader_image from '../../common/Loader_image';
-import { useParams } from 'react-router-dom';
-import { isHtmlElement } from 'react-router-dom/dist/dom';
+import { useUPdateOrder } from '../../hooks/order.hook';
+import { Link, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 const OrderItem = ({ order, method }: { order: any; method: any }) => {
@@ -26,6 +23,25 @@ const OrderItem = ({ order, method }: { order: any; method: any }) => {
   return (
     <>
       <div className="mb-10 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <Link to="/orders" className="inline-flex hover:underline m-7 gap-2">
+          <span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+              />
+            </svg>
+          </span>
+          Go Orders
+        </Link>
         <div className="p-4 sm:p-6 xl:p-9">
           <div className="flex flex-col-reverse gap-5 xl:flex-row xl:justify-between">
             <div className="flex flex-col gap-4 sm:flex-row xl:gap-9">
@@ -62,17 +78,18 @@ const OrderItem = ({ order, method }: { order: any; method: any }) => {
                 </span>
                 <span className="mt-2 block">
                   <span className="font-medium">Address:</span>
-                  {order[0]?.address}
+                  {order[0]?.thanhPho} - {order[0]?.huyen} - {order[0]?.xa} -{' '}
+                  {order[0].diaChiCuThe}
                 </span>
               </div>
             </div>
             <h3 className="text-2xl font-medium text-black dark:text-white">
-              Order #{order[0]._id}
+              Order #{order?._id}
             </h3>
           </div>
 
           <div className="my-10 rounded-sm border border-stroke p-5 dark:border-strokedark">
-            {order[0]?.product_items.map((item: any, index: any) => (
+            {order[0]?.product_items?.map((item: any, index: any) => (
               <div className="items-center sm:flex" key={index}>
                 <div className="mb-3 mr-6 h-20 w-20 sm:mb-0">
                   <img
@@ -138,11 +155,11 @@ const OrderItem = ({ order, method }: { order: any; method: any }) => {
                   <p className="mb-4 flex justify-between font-medium text-black dark:text-white">
                     <span> Subtotal </span>
                     <span>
-                      {' '}
                       ${' '}
-                      {(order[0].order_total - order[0].shipping_price).toFixed(
-                        2,
-                      )}{' '}
+                      {(
+                        order[0]?.order_total.toFixed(2) -
+                        order[0].shipping_price.toFixed(2)
+                      ).toFixed(2)}
                     </span>
                   </p>
                   <p className="mb-4 flex justify-between font-medium text-black dark:text-white">

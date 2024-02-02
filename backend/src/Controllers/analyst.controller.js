@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const createPromiseAll = require("../Libs/promise");
 const Order = require("../Models/order.model");
 const Product = require("../Models/product.model");
@@ -34,6 +35,11 @@ exports.analystBasic = asyncHandleError(async (req, res, next) => {
 exports.analystOrder = asyncHandleError(async (req, res, next) => {
   const AnalystOrder = await Order.aggregate([
     {
+      $match: {
+        order_status: new mongoose.Types.ObjectId("65a5ec884a4a86cae890b661"),
+      },
+    },
+    {
       $group: {
         _id: {
           $month: "$order_date",
@@ -44,17 +50,38 @@ exports.analystOrder = asyncHandleError(async (req, res, next) => {
     { $project: { month: "$_id", total_product_by_month: 1 } },
     { $sort: { _id: 1 } },
   ]);
-  const data = AnalystOrder.map((item) => item.total_product_by_month);
+
+  const AnalystOrder2 = await Order.aggregate([
+    {
+      $group: {
+        _id: {
+          $month: "$order_date",
+        },
+        total_product_by_month: { $sum: "$order_total" },
+      },
+    },
+    { $project: { month: "$_id", total_product_by_month: 1 } },
+    { $sort: { _id: 1 } },
+  ]);
+
+  let arr3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  const data1 = AnalystOrder.map((item) => item.total_product_by_month);
+  const data2 = AnalystOrder2.map((item) => item.total_product_by_month);
+
   res.json({
     series: [
       {
-        name: "Product One",
-        data,
+        name: "Số lượng sản phẩm đã bán",
+        data: data1,
       },
-
       {
-        name: "Product Two",
-        data: [0, 2, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0],
+        name: "Tổng doanh thu ước tích",
+        data: data2,
+      },
+      {
+        name: "Default",
+        data: arr3,
       },
     ],
   });

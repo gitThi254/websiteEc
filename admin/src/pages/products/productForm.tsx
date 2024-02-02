@@ -62,10 +62,7 @@ const ProductForm = ({
       <Breadcrumb pageName={`product form ${location}`} />
 
       <div className="grid grid-cols-1 border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <Link
-          to="/categories/list"
-          className="inline-flex hover:underline m-7 gap-2"
-        >
+        <Link to="/products" className="inline-flex hover:underline m-7 gap-2">
           <span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +79,7 @@ const ProductForm = ({
               />
             </svg>
           </span>
-          Go Categories
+          Go Products
         </Link>
         <div className="flex flex-col col-span-2 span">
           {/* <!-- Contact Form --> */}

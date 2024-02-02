@@ -16,54 +16,69 @@ import {
 } from '../../hooks/product.hook';
 
 const ProductItemForm = ({ productItem }: { productItem: any }) => {
-  const location = useLocation().pathname.split('/')[3];
-  const params = useParams();
-  const id = params.id;
+  const location = useLocation().pathname.split('/')[4];
+  const { id, product_item_id } = useParams();
   const { mutate: uploadImageMutation, isPending } = useUploadImage();
   const checkEdit = location === 'edit';
   const { data: variationOptionsOfCategory, isLoading } =
     useVariationOptionsOfCategory(id);
   const { mutate: createProductItemMutation, isPending: isPendingSubmit } =
     useCreateProductItem();
-
   const { mutate: updateProductItemMutation, isPending: pending } =
     useUpdateProductItem();
 
   const {
     register,
     handleSubmit,
+    watch,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm<ProductItemForm>({
     defaultValues: {
-      product_id: checkEdit ? productItem.product_id : id,
-      SKU: checkEdit ? productItem.SKU : '',
-      qty_in_stock: checkEdit ? productItem.qty_in_stock : 0,
-      price: checkEdit ? productItem.qty_in_stock : 0,
-      variation_option_id: checkEdit ? productItem.variation_option_id : [],
-      product_image: checkEdit ? productItem.product_image : undefined,
+      product_id: checkEdit ? productItem?.product_id : id,
+      SKU: checkEdit ? productItem?.SKU : '',
+      qty_in_stock: checkEdit ? productItem?.qty_in_stock : 0,
+      price: checkEdit ? productItem?.price : 0,
+      variation_option_id: checkEdit ? productItem?.variation_option_id : [],
+      product_image: checkEdit ? productItem?.product_image : undefined,
     },
     resolver: yupResolver(productItemSchema),
   });
+  const variation_option = watch('SKU')
+    ?.split('-')
+    ?.map((item: any) => {
+      if (item.startsWith('#'))
+        return (
+          <>
+            <span
+              className={`border w-20 h-6 inline-block`}
+              style={{ backgroundColor: `${item}` }}
+              key={item}
+            ></span>
+          </>
+        );
+      else return <span key={item}>{item}</span>;
+    });
+
   const { data: images } = useQuery<Image[]>({ queryKey: ['images'] });
   const onSubmit = (data: ProductItemForm) => {
-    data.SKU = data?.variation_option_id
-      .map((item: any) => item.split('-')[1])
-      .join('-');
-    data.variation_option_id = data?.variation_option_id.map(
-      (item: any) => item.split('-')[0],
-    );
     if (id && location !== 'edit') {
+      data.SKU = data?.variation_option_id
+        .map((item: any) => item.split('-')[1])
+        .join('-');
+      data.variation_option_id = data?.variation_option_id.map(
+        (item: any) => item.split('-')[0],
+      );
+
       createProductItemMutation({ id, data });
     } else {
-      updateProductItemMutation({ id, data });
+      updateProductItemMutation({ id: product_item_id, data });
     }
   };
   const queryClient = useQueryClient();
   useEffect(() => {
     if (location === 'edit') {
-      queryClient.setQueryData(['images'], productItem.product_image);
+      queryClient.setQueryData(['images'], productItem?.product_image);
     }
   }, []);
 
@@ -72,11 +87,9 @@ const ProductItemForm = ({ productItem }: { productItem: any }) => {
       setValue('product_image', images);
     }
   }, [images]);
-  if (isLoading && location !== 'edit') return <Loader />;
+  if (!checkEdit && isLoading) return <Loader />;
   return (
     <>
-      <Breadcrumb pageName={`product form item ${location}`} />
-
       <div className="grid grid-cols-1 border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2">
           <div className="">
@@ -111,15 +124,23 @@ const ProductItemForm = ({ productItem }: { productItem: any }) => {
               </div>
               <div>
                 <div>
-                  {variationOptionsOfCategory?.map((item: any, i: any) => (
-                    <VariationSelect
-                      register={register}
-                      index={i}
-                      variationItem={item}
-                      name={Object.keys(item)}
-                      key={item._id}
-                    />
-                  ))}
+                  {checkEdit ? (
+                    <div className="flex items-center gap-4">
+                      {variation_option}
+                    </div>
+                  ) : (
+                    <>
+                      {variationOptionsOfCategory?.map((item: any, i: any) => (
+                        <VariationSelect
+                          register={register}
+                          index={i}
+                          variationItem={item}
+                          name={Object.keys(item)}
+                          key={item._id}
+                        />
+                      ))}
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -46,7 +46,7 @@ export const useUPdateOrder = () => {
         exact: true,
       });
       toast.success('update status order success');
-      navigate(`/orders/list`);
+      navigate(`/orders`);
     },
     onError(error: any) {
       toast.error('update category fail');

@@ -1,18 +1,27 @@
-import React from 'react';
 import { useVariationOption } from '../../hooks/category.hook';
 import { useParams } from 'react-router-dom';
 import Loader from '../../common/Loader';
-import VariationForm from '../Variations/VariationForm';
-import VariationOptionForm from './VariationOptionForm';
+import ModelVariationOption from './ModelVariationOption';
 
-const VariationOptionReq = () => {
-  const { id } = useParams();
-  const { data: variationOption, isPending } = useVariationOption(id);
+const VariationOptionReq = ({ open, setOpen }: { open: any; setOpen: any }) => {
+  const { id, variation_id, option_id } = useParams();
+  const { data: variationOption, isPending } = useVariationOption(
+    id,
+    variation_id,
+    option_id,
+  );
   if (isPending) return <Loader />;
   return (
     <>
       {variationOption && (
-        <VariationOptionForm variationOption={variationOption} />
+        <ModelVariationOption
+          title="Form cập nhật biến thể"
+          description="Vui lòng nhập vào form"
+          button="Cập nhật variation"
+          data={variationOption}
+          open={open}
+          setOpen={setOpen}
+        />
       )}
     </>
   );

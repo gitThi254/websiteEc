@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NotFound = () => {
   return (
     <div className="rounded-sm min-h-screen border border-stroke bg-white px-5 py-10 shadow-default dark:border-strokedark dark:bg-boxdark sm:py-20">

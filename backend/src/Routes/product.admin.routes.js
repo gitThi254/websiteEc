@@ -12,19 +12,16 @@ const {
   updateProductItem,
   deleteProductItem,
   getProductDetail,
+  TopfiveProductBestSell,
+  getProductsClient,
 } = require("../Controllers/product.controller");
 
 const router = Router();
 
+router.route("/topFiveProductBestSell").get(TopfiveProductBestSell);
+
 router.route("/").post(authRequired, isAdmin, createProduct).get(getProducts);
-
-router.route("/item/details/:id").get(getProductDetail);
-
-router
-  .route("/:id")
-  .get(authRequired, isAdmin, getProduct)
-  .put(authRequired, isAdmin, updateProduct)
-  .delete(authRequired, isAdmin, deleteProduct);
+router.route("/client").get(getProductsClient);
 
 router
   .route("/items/:id")
@@ -36,5 +33,12 @@ router
   .get(authRequired, isAdmin, getProductItem)
   .put(authRequired, isAdmin, updateProductItem)
   .delete(authRequired, isAdmin, deleteProductItem);
+router.route("/item/details/:id").get(getProductDetail);
+
+router
+  .route("/:id")
+  .get(authRequired, isAdmin, getProduct)
+  .put(authRequired, isAdmin, updateProduct)
+  .delete(authRequired, isAdmin, deleteProduct);
 
 module.exports = router;

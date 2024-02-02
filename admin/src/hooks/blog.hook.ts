@@ -24,7 +24,7 @@ export const useCreateBlog = () => {
     mutationFn: createBlogReq,
     onSuccess: (data) => {
       toast.success('create blogs success');
-      navigate('/blogs/list');
+      navigate('/blogs');
     },
     onError(error: any) {
       toast.error('delete blogs fail');

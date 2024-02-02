@@ -19,9 +19,7 @@ export const productReq = (id?: string) =>
     .then((res) => {
       return res.data;
     })
-    .catch((err: any) => {
-      console.log(err);
-    });
+    .catch((err: any) => {});
 
 export const deleteProductReq = (id?: string) =>
   axios

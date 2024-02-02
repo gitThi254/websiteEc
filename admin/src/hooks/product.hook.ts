@@ -16,8 +16,7 @@ import {
   updateProductItemReq,
   updateProductReq,
 } from '../api/product.api';
-import { useNavigate } from 'react-router-dom';
-import ProductItemReq from '../pages/product-items/ProductItemReq';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export const useProducts = (query?: any) => {
@@ -36,15 +35,16 @@ export const useProduct = (id?: string) => {
 };
 
 export const useProductItem = (id?: string) => {
+  const { id: product_id } = useParams();
   return useQuery({
-    queryKey: ['products-item', id],
+    queryKey: ['products', product_id, 'product-items', id],
     queryFn: () => productItemReq(id),
   });
 };
 
 export const useProductItems = (id?: string) => {
   return useQuery({
-    queryKey: ['products/items'],
+    queryKey: ['products', id, 'product_items'],
     queryFn: () => productItemsReq(id),
   });
 };
@@ -58,11 +58,14 @@ export const useCreateProduct = () => {
       toast.success('create product success');
 
       queryClient.setQueryData(['images'], null);
-      navigate('/products/list');
+      navigate('/products');
     },
     onError(error: any) {
       toast.error('create product category fail');
       error.message = error?.response?.data;
+    },
+    onSettled: () => {
+      queryClient.setQueryData(['images'], null);
     },
   });
 };
@@ -74,20 +77,21 @@ export const useUpdateProduct = () => {
     mutationFn: updateProductReq,
     onSuccess: (data) => {
       toast.success('update product success');
-
-      queryClient.setQueryData(['images'], null);
-      navigate('/products/list');
+      queryClient.setQueryData(['products', data._id], data);
+      navigate('/products');
     },
     onError(error: any) {
       toast.error('update product fail');
       error.message = error?.response?.data;
+    },
+    onSettled: () => {
+      queryClient.setQueryData(['images'], null);
     },
   });
 };
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   return useMutation({
     mutationFn: deleteProductReq,
     onSuccess: (data) => {
@@ -143,12 +147,22 @@ export const useUpdateProductItem = () => {
     mutationFn: updateProductItemReq,
     onSuccess: (data) => {
       toast.success('update product item success');
-      queryClient.setQueryData(['images'], null);
-      navigate(`/products/list/${data.product_id}`);
+      console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ['products', data.product_id, 'product_items'],
+      });
+      queryClient.setQueryData(
+        ['products', data.product_id, 'product-items', data._id],
+        data,
+      );
+      navigate(`/products/${data.product_id}`);
     },
     onError(error: any) {
       toast.error('update product item fail');
       error.message = error?.response?.data;
+    },
+    onSettled: () => {
+      queryClient.setQueryData(['images'], null);
     },
   });
 };

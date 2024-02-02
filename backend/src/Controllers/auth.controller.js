@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { not_found } = require("../Errors/err_function");
 const createAccessToken = require("../Libs/jwt");
 const removeVietnameseTones = require("../Libs/removeVietnameseTones");
@@ -60,7 +61,9 @@ exports.verifyToken = asyncHandleError(async (req, res, next) => {
       return next(
         new CustomError("Invalid or token expired, you are loggin again", 401)
       );
-    let user = await User.findById(token.id).populate("address.default");
+    let user = await User.findById(token.id).populate(
+      "address.default address.address_list"
+    );
 
     if (!user) return next(new CustomError("User not found", 404));
     return res.json(await user.populate("address.default.country_id"));
@@ -174,10 +177,52 @@ exports.createAddress = asyncHandleError(async (req, res, next) => {
   res.status(201).json(newAddress);
 });
 
+exports.updateAddress = asyncHandleError(async (req, res, next) => {
+  const { id } = req.params;
+  const data = req.body;
+  const address = await Address.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
+  });
+  if (!address) return next(not_found("address", id));
+  res.status(200).json(address);
+});
+
+exports.deleteAddress = asyncHandleError(async (req, res, next) => {
+  const { id } = req.params;
+  const { _id } = req.user;
+  const address = await Address.findByIdAndDelete(id).then(async (res) => {
+    await User.findById(_id).then(async (data) => {
+      if (data?.address?.default.toString() === res._id.toString()) {
+        await User.findOneAndUpdate(_id, {
+          $pull: { "address.address_list": res._id },
+          "address.default": null,
+        });
+      } else {
+        await User.findOneAndUpdate(_id, {
+          $pull: { "address.address_list": res._id },
+        });
+      }
+      return data;
+    });
+    return res;
+  });
+  if (!address) return next(not_found("address", id));
+
+  res.status(200).json(address);
+});
+
+exports.getAddress = asyncHandleError(async (req, res, next) => {
+  const { id } = req.params;
+  const address = await Address.findById(id);
+  if (!address) return next(not_found("address", id));
+  res.status(200).json(address);
+});
+
 exports.getAddresses = asyncHandleError(async (req, res, next) => {
   const { _id } = req.user;
   console.log(_id);
-  const countries = await Address.find({ users: _id });
+  const countries = await Address.find({ users: _id }).sort("-createdAt");
   res.status(200).json(countries);
 });
 
