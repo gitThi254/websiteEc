@@ -144,7 +144,7 @@ const Orders = () => {
             </table>
             <Pagination_page
               itemsPerPage={6}
-              items={Orders.totalPage[0].order_status ?? 0}
+              items={Orders?.totalPage[0]?.order_status ?? 0}
               setSearch={setSearchParams}
               search={searchParams}
             />

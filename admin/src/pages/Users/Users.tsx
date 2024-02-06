@@ -137,7 +137,7 @@ const Users = () => {
               </table>
               <Pagination_page
                 itemsPerPage={5}
-                items={users.totalPage ?? 0}
+                items={users?.totalPage ?? 0}
                 setSearch={setSearchParams}
                 search={searchParams}
               />

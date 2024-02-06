@@ -97,7 +97,7 @@ const Categories = () => {
               </table>
               <Pagination_page
                 itemsPerPage={6}
-                items={categories.totalPage ?? 0}
+                items={categories?.totalPage ?? 0}
                 setSearch={setSearchParams}
                 search={searchParams}
               />

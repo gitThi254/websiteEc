@@ -26,6 +26,7 @@
     "apexcharts": "^3.41.0",
     "axios": "^1.6.5",
     "date-fns": "^3.3.1",
+    "dotenv": "^16.4.1",
     "headlessui": "^0.0.0",
     "jsvectormap": "^1.5.3",
     "match-sorter": "^6.3.1",
