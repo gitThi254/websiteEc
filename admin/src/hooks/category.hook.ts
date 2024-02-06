@@ -235,7 +235,7 @@ export const useCreateCategory = () => {
   return useMutation({
     mutationFn: categoryCreateReq,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories', ''] });
+      queryClient.invalidateQueries({ queryKey: ['categories', 'admin', ''] });
       toast.success('create category success');
     },
     onError(error: any) {
