@@ -294,12 +294,12 @@ const SignIn = () => {
                 </button>
 
                 <div className="mt-6 text-center">
-                  <p>
+                  <div>
                     Don’t have any account?{' '}
                     <Link to="/auth/signup" className="text-primary">
                       Sign Up
                     </Link>
-                  </p>
+                  </div>
                 </div>
               </form>
             </div>

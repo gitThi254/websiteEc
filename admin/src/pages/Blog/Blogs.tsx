@@ -1,8 +1,5 @@
-import React from 'react';
-import Breadcrumb from '../../components/Breadcrumb';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useBlogs } from '../../hooks/blog.hook';
-import Loader from '../../common/Loader';
 import Loader_image from '../../common/Loader_image';
 import Search from '../../components/btn/Search';
 import { useCategories } from '../../hooks/category.hook';
@@ -48,7 +45,7 @@ const Blogs = () => {
             </span>
             Tạo bài viết
           </Link>
-          {blogs?.blogs?.length !== 0 ? (
+          {blogs?.data?.length !== 0 ? (
             <>
               <table className="w-full table-auto">
                 <thead>
@@ -80,7 +77,7 @@ const Blogs = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {blogs?.blogs?.map((item: any) => (
+                  {blogs?.data?.map((item: any) => (
                     <tr key={item._id}>
                       <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                         <h5 className="font-medium text-black dark:text-white line-clamp-3">
@@ -197,8 +194,8 @@ const Blogs = () => {
                 </tbody>
               </table>
               <Pagination_page
-                itemsPerPage={5}
-                items={blogs.totalPage ?? 0}
+                itemsPerPage={6}
+                items={blogs?.totalPage ?? 0}
                 setSearch={setSearchParams}
                 search={searchParams}
               />

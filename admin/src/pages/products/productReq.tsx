@@ -1,4 +1,3 @@
-import React from 'react';
 import ProductForm from './productForm';
 import { useProduct } from '../../hooks/product.hook';
 import { useLocation, useParams } from 'react-router-dom';
@@ -15,10 +14,9 @@ const ProductReq = () => {
   return (
     <>
       {location === 'edit'
-        ? categories && (
-            <ProductForm product={product} categories={categories} />
-          )
-        : categories && <ProductForm categories={categories} />}
+        ? categories &&
+          product && <ProductForm product={product} categories={categories} />
+        : categories && product && <ProductForm categories={categories} />}
     </>
   );
 };

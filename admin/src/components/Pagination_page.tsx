@@ -31,7 +31,7 @@ const Pagination_page = ({
     <>
       <ReactPaginate
         breakLabel="..."
-        containerClassName="isolate inline-flex -space-x-px rounded-md shadow-sm"
+        containerClassName="inline-flex -space-x-px rounded-md shadow-sm"
         nextClassName="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-primary hover:text-white focus:z-20 focus:outline-offset-0"
         nextLabel={
           <svg

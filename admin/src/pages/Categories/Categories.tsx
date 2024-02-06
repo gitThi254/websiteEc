@@ -67,7 +67,7 @@ const Categories = () => {
               Thêm khuyến mãi
             </Link>
           </div>
-          {categories?.categories?.length !== 0 ? (
+          {categories?.data?.length !== 0 ? (
             <>
               <table className="w-full table-auto">
                 <thead>
@@ -90,7 +90,7 @@ const Categories = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {categories?.categories?.map((item: any) => (
+                  {categories?.data?.map((item: any) => (
                     <Category item={item} key={item._id} />
                   ))}
                 </tbody>

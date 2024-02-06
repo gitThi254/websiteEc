@@ -41,7 +41,7 @@ const Orders = () => {
       <Search url="orders" />
       <SelectOrder method={method} />
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-        {Orders?.orders?.length !== 0 ? (
+        {Orders?.data?.length !== 0 ? (
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
@@ -70,7 +70,7 @@ const Orders = () => {
                 </tr>
               </thead>
               <tbody>
-                {Orders?.orders?.map((item: any) => (
+                {Orders?.data?.map((item: any) => (
                   <tr key={item._id}>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
@@ -144,7 +144,7 @@ const Orders = () => {
             </table>
             <Pagination_page
               itemsPerPage={6}
-              items={Orders?.totalPage[0]?.order_status ?? 0}
+              items={Orders?.totalPage ?? 0}
               setSearch={setSearchParams}
               search={searchParams}
             />

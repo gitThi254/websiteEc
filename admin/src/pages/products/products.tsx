@@ -53,7 +53,7 @@ const Products = () => {
                 <table className="w-full table-auto">
                   <thead>
                     <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                      <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                      <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11 overflow-hidden">
                         Tên sản phẩm
                       </th>
                       <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
@@ -77,10 +77,10 @@ const Products = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {products?.products?.map((item: any) => (
+                    {products[0]?.data?.map((item: any) => (
                       <tr key={item.id}>
                         <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                          <h5 className="font-medium text-black dark:text-white">
+                          <h5 className="font-medium text-black dark:text-white line-clamp-2">
                             {item?.name}
                           </h5>
                         </td>
@@ -95,7 +95,7 @@ const Products = () => {
                           </p>
                         </td>
                         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                          <p className="inline-flex bg-opacity-10 py-1 px-3 text-sm font-medium ">
+                          <p className="inline-flex bg-opacity-10 py-1 px-3 text-sm font-medium line-clamp-2">
                             {item?.description}
                           </p>
                         </td>
@@ -194,7 +194,7 @@ const Products = () => {
                 </table>
                 <Pagination_page
                   itemsPerPage={6}
-                  items={products?.totalPage ?? 0}
+                  items={products[0]?.totalPage[0]?.total ?? 0}
                   setSearch={setSearchParams}
                   search={searchParams}
                 />

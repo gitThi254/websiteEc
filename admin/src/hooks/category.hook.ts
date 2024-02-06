@@ -37,6 +37,8 @@ export const useCategories = (query?: any) => {
     queryKey: ['categories', query?.toString()],
     queryFn: () => categoryReq(query),
     placeholderData: keepPreviousData,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -45,6 +47,8 @@ export const useCategoriesAdmin = (query?: any) => {
     queryKey: ['categories', 'admin', query?.toString()],
     queryFn: () => categoryAdminReq(query),
     placeholderData: keepPreviousData,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
 export const useCategory = (id?: string) => {

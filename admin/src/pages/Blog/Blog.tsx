@@ -4,17 +4,13 @@ import Loader_image from '../../common/Loader_image';
 
 const Blog = () => {
   const { id } = useParams();
-  console.log(id);
   const { data: blog, isPending } = useBlog(id);
   if (isPending) return <Loader_image />;
 
   return (
     <>
       <div>
-        <Link
-          to="/blogs/list"
-          className="inline-flex hover:underline m-7 gap-2"
-        >
+        <Link to="/blogs" className="inline-flex hover:underline m-7 gap-2">
           <span>
             <svg
               xmlns="http://www.w3.org/2000/svg"

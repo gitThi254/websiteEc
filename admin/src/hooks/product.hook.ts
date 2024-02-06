@@ -24,6 +24,8 @@ export const useProducts = (query?: any) => {
     queryKey: ['products', query?.toString()],
     queryFn: () => productsReq(query),
     placeholderData: keepPreviousData,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -78,6 +80,8 @@ export const useUpdateProduct = () => {
     onSuccess: (data) => {
       toast.success('update product success');
       queryClient.setQueryData(['products', data._id], data);
+      queryClient.invalidateQueries({ queryKey: ['products', ''] });
+
       navigate('/products');
     },
     onError(error: any) {

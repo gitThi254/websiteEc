@@ -116,7 +116,9 @@ const ProductForm = ({
                   >
                     <option value="">--choose-category--</option>
                     {categories?.map((item: any) => (
-                      <option value={item?._id}>{item?.category_name}</option>
+                      <option value={item?._id} key={item._id}>
+                        {item?.category_name}
+                      </option>
                     ))}
                   </select>
                   <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
