@@ -4,6 +4,7 @@ const CartItem = require("../Models/cart_item.model");
 const asyncHandleError = require("../Utils/asyncHandleError");
 const ProductItem = require("../Models/product_item.model");
 const { not_found } = require("../Errors/err_function");
+const Notification = require("../Models/nofitication.model");
 
 exports.createCart = asyncHandleError(async (req, res, next) => {
   const { _id } = req.user;
@@ -18,6 +19,7 @@ exports.getCarts = asyncHandleError(async (req, res, next) => {
 });
 
 exports.createCartItem = asyncHandleError(async (req, res, next) => {
+  const { _id } = req.user;
   const { cartId } = req.params;
   const cartItem = req.body;
 
@@ -26,10 +28,19 @@ exports.createCartItem = asyncHandleError(async (req, res, next) => {
     product_item_id: cartItem.product_item_id,
   });
   if (!findProduct) {
-    const newCartItem = await CartItem.create({ ...cartItem, cart_id: cartId });
+    const newCartItem = await CartItem.create({
+      ...cartItem,
+      cart_id: cartId,
+    }).then(async (res) => {
+      await Notification.create({
+        title: "Thêm sản phẩm vào giỏ hàng",
+        content: `Bạn đã thêm ${req.body.product_name} vào giỏ hàng thành công`,
+        user_id: _id,
+      });
+      return res;
+    });
     return res.status(201).json(newCartItem);
   } else {
-    console.log(cartItem);
     const newCartItem = await CartItem.findByIdAndUpdate(
       findProduct._id,
       {
@@ -37,7 +48,6 @@ exports.createCartItem = asyncHandleError(async (req, res, next) => {
       },
       { new: true }
     );
-    console.log(newCartItem);
     return res.status(200).json(newCartItem);
   }
 });

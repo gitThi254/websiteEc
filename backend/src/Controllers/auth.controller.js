@@ -8,7 +8,9 @@ const Country = require("../Models/country.model");
 const User = require("../Models/user.model");
 const CustomError = require("../Utils/CustomError");
 const asyncHandleError = require("../Utils/asyncHandleError");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Notification = require("../Models/nofitication.model");
 
 exports.register = asyncHandleError(async (req, res, next) => {
   const newUser = await User.create(req.body).then(async (res) => {
@@ -16,6 +18,31 @@ exports.register = asyncHandleError(async (req, res, next) => {
     return res;
   });
   res.status(201).json(newUser);
+});
+
+exports.getNofitications = asyncHandleError(async (req, res, next) => {
+  const { _id } = req.user;
+  const nofitications = await Notification.find({ user_id: _id }).sort(
+    "-createdAt"
+  );
+  res.json(nofitications);
+});
+
+exports.resetPassword = asyncHandleError(async (req, res, next) => {
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+  if (!user || !(await user.comparePW(req.body.old_password))) {
+    return next(new CustomError("Mật khẩu không chính xác", 401));
+  }
+  req.body.new_password = await bcrypt.hash(req.body.new_password, 10);
+  const userUpdate = await User.findByIdAndUpdate(
+    _id,
+    {
+      password: req.body.new_password,
+    },
+    { new: true, runValidators: true }
+  );
+  res.json(userUpdate);
 });
 
 exports.login = asyncHandleError(async (req, res, next) => {
@@ -61,17 +88,18 @@ exports.verifyToken = asyncHandleError(async (req, res, next) => {
       return next(
         new CustomError("Invalid or token expired, you are loggin again", 401)
       );
+
     let user = await User.findById(token.id).populate(
       "address.default address.address_list"
     );
 
     if (!user) return next(new CustomError("User not found", 404));
-    return res.json(await user.populate("address.default.country_id"));
+    return res.json(user);
   });
 });
 
 exports.getallUser = asyncHandleError(async (req, res, next) => {
-  const { role, name } = req.query;
+  const { role, name, page } = req.query;
   const users = await User.aggregate([
     {
       $match: {},
@@ -101,10 +129,38 @@ exports.getallUser = asyncHandleError(async (req, res, next) => {
       },
     },
     {
-      $limit: 10,
+      $skip: (Number(page ? page : 1) - 1) * 5,
+    },
+    {
+      $limit: 5,
     },
   ]);
-  res.json(users);
+
+  const totalPage = await User.aggregate([
+    {
+      $addFields: {
+        fullName: {
+          $concat: ["$lastname", " ", "$firstname"],
+        },
+      },
+    },
+    {
+      $match: role
+        ? {
+            role: role,
+          }
+        : {},
+    },
+    {
+      $match: {
+        fullName: { $regex: `.*${name ? name : ""}.*`, $options: "i" },
+      },
+    },
+    {
+      $count: "totalPage",
+    },
+  ]);
+  res.json({ users, totalPage: totalPage[0]?.totalPage });
 });
 
 exports.getUser = asyncHandleError(async (req, res, next) => {

@@ -1,6 +1,7 @@
 import { useUPdateOrder } from '../../hooks/order.hook';
 import { Link, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 
 const OrderItem = ({ order, method }: { order: any; method: any }) => {
   const { id } = useParams();
@@ -16,8 +17,16 @@ const OrderItem = ({ order, method }: { order: any; method: any }) => {
   });
   const { mutate: updateOrderMutation, isPending: pendingUpdate } =
     useUPdateOrder();
-  const onSubmit = (data: any) => {
-    updateOrderMutation({ id, data });
+  const onSubmit = (data: UpdateOrder) => {
+    updateOrderMutation({
+      id,
+      data: {
+        status: data?.status,
+        status_name: method.find((item: any) => item._id === data.status)
+          ?.status,
+        user_id: order[0].user?._id,
+      },
+    });
   };
 
   return (

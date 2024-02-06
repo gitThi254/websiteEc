@@ -61,9 +61,24 @@ exports.getCategories = asyncHandleError(async (req, res, next) => {
       },
     },
     {
+      $lookup: {
+        from: "promotions",
+        foreignField: "_id",
+        localField: "promotion",
+        as: "eventPromotion",
+      },
+    },
+    {
       $unwind: {
         preserveNullAndEmptyArrays: true,
         path: "$parent_category_name",
+      },
+    },
+
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: "$eventPromotion",
       },
     },
     {
@@ -81,4 +96,95 @@ exports.getCategories = asyncHandleError(async (req, res, next) => {
     },
   ]);
   res.json(categories);
+});
+
+exports.getCategoriesAdmin = asyncHandleError(async (req, res, next) => {
+  const { name, page } = req.query;
+  const categories = await Category.aggregate([
+    {
+      $lookup: {
+        from: "categories",
+        foreignField: "_id",
+        localField: "parent_category_id",
+        as: "parent_category_name",
+      },
+    },
+    {
+      $lookup: {
+        from: "promotions",
+        foreignField: "_id",
+        localField: "promotion",
+        as: "eventPromotion",
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: "$parent_category_name",
+      },
+    },
+
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: "$eventPromotion",
+      },
+    },
+    {
+      $match: {
+        category_name: { $regex: `.*${name ? name : ""}.*`, $options: "i" },
+      },
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $skip: (Number(page ? page : 1) - 1) * 6,
+    },
+    {
+      $limit: 6,
+    },
+  ]);
+  const totalPage = await Category.aggregate([
+    {
+      $lookup: {
+        from: "categories",
+        foreignField: "_id",
+        localField: "parent_category_id",
+        as: "parent_category_name",
+      },
+    },
+    {
+      $lookup: {
+        from: "promotions",
+        foreignField: "_id",
+        localField: "promotion",
+        as: "eventPromotion",
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: "$parent_category_name",
+      },
+    },
+
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: "$eventPromotion",
+      },
+    },
+    {
+      $match: {
+        category_name: { $regex: `.*${name ? name : ""}.*`, $options: "i" },
+      },
+    },
+    {
+      $count: "totalPage",
+    },
+  ]);
+  res.json({ categories, totalPage: totalPage[0]?.totalPage });
 });

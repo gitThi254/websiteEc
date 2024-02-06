@@ -9,6 +9,7 @@ const PaymentMethod = require("../Models/payment_method.model");
 const ShippingMethod = require("../Models/shipping_method.model");
 const asyncHandleError = require("../Utils/asyncHandleError");
 const ProductItem = require("../Models/product_item.model");
+const Notification = require("../Models/nofitication.model");
 
 exports.createShippingMethod = asyncHandleError(async (req, res, next) => {
   const newShippingMethod = req.body;
@@ -48,6 +49,11 @@ exports.createOrder = asyncHandleError(async (req, res, next) => {
   const { _id } = req.user;
   const order = await Order.create({ ...newOrder, user_id: _id }).then(
     async (res) => {
+      await Notification.create({
+        title: "Đặt hàng",
+        content: `Bạn đã đặt hàng thành công với mã đặt hàng là : ${res._id}`,
+        user_id: _id,
+      });
       const order_lines = newOrder?.cart?.map((itemOrder) => {
         return CartItem.findById(itemOrder).then(async (item) => {
           return await OrderLine.create({
@@ -134,7 +140,7 @@ exports.getAllOrders = asyncHandleError(async (req, res, next) => {
       $unwind: "$orderItems",
     },
     {
-      $unwind: "$address",
+      $unwind: { preserveNullAndEmptyArrays: true, path: "$address" },
     },
     {
       $unwind: "$shipping_method",
@@ -151,7 +157,7 @@ exports.getAllOrders = asyncHandleError(async (req, res, next) => {
         shipping_method: "$shipping_method.name",
         order_total: 1,
         status: "$order_status.status",
-        order_id: "$order_status._id",
+        order_id: "$orderItems._id",
         qty: "$orderItems.qty",
         product_item: "$orderItems.product_item_id",
         payment_method: "$payment_method.name",
@@ -271,6 +277,7 @@ exports.getAllOrders = asyncHandleError(async (req, res, next) => {
         createdAt: 1,
         value: "$variation.value",
         product_name: "$product.name",
+        product_id: "$product._id",
         category_name: "$category.category_name",
       },
     },
@@ -282,6 +289,7 @@ exports.getAllOrders = asyncHandleError(async (req, res, next) => {
           order: "$order",
           order_id: "$order_id",
           product_image: "$product_image",
+          product_id: "$product_id",
           price: "$price",
           qty: "$qty",
           product_name: "$product_name",
@@ -300,19 +308,20 @@ exports.getAllOrders = asyncHandleError(async (req, res, next) => {
         order: "$_id.order",
         order_id: "$_id.order_id",
         product_image: "$_id.product_image",
+        product_id: "$_id.product_id",
         price: "$_id.price",
         qty: "$_id.qty",
         product_name: "$_id.product_name",
         category_name: "$_id.category_name",
         createdAt: "$_id.createdAt",
         value: 1,
-        _id: null,
+        _id: 0,
       },
     },
     {
       $sort: {
-        date: -1,
-        price: 1,
+        createdAt: -1,
+        price: -1,
         value: 1,
         color: 1,
         product_name: -1,
@@ -351,12 +360,12 @@ exports.getAllOrders = asyncHandleError(async (req, res, next) => {
       $count: "order_status",
     },
   ]);
-  console.log(totalPage);
+
   res.json({ getAllOrders, totalPage });
 });
 
 exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
-  const { status, name } = req.query;
+  const { status, name, page } = req.query;
   const orders = await Order.aggregate([
     {
       $lookup: {
@@ -557,9 +566,6 @@ exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
       },
     },
     {
-      $limit: 10,
-    },
-    {
       $sort: {
         order_date: -1,
         fullname: -1,
@@ -568,9 +574,38 @@ exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
         _id: 1,
       },
     },
+    {
+      $skip: (Number(page ? page : 1) - 1) * 5,
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+  const totalPage = await Order.aggregate([
+    {
+      $lookup: {
+        from: "order_lines",
+        localField: "_id",
+        foreignField: "order_id",
+        as: "orderItems",
+      },
+    },
+    {
+      $unwind: "$orderItems",
+    },
+    {
+      $match: status
+        ? {
+            order_status: new mongoose.Types.ObjectId(status),
+          }
+        : {},
+    },
+    {
+      $count: "order_status",
+    },
   ]);
 
-  res.status(200).json(orders);
+  res.status(200).json({ orders, totalPage });
 });
 
 exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
@@ -781,13 +816,18 @@ exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
 
 exports.updateOrder = asyncHandleError(async (req, res, next) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, status_name, user_id } = req.body;
 
   const order = await Order.findByIdAndUpdate(
     id,
     { order_status: status },
     { new: true }
   ).then(async (res) => {
+    await Notification.create({
+      title: "Trạng thái đơn hàng",
+      content: `Đơn hàng của bạn ${id} : ${status_name}`,
+      user_id: user_id,
+    });
     if (status === "65a5ec884a4a86cae890b661") {
       await OrderLine.find({ order_id: res?._id })
         .populate("product_item_id")
@@ -801,6 +841,7 @@ exports.updateOrder = asyncHandleError(async (req, res, next) => {
               { new: true }
             );
           });
+
           await createPromiseAll(order_lines);
           return data;
         });

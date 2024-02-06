@@ -4,9 +4,20 @@ export const categoryReq = async (query?: any) => {
   const urlParams = {
     name: query?.get('keyword'),
     status: query?.get('status'),
+    page: query?.get('page'),
   };
   const searchQuery = QueryString.stringify(urlParams, { encode: false });
   return axios.get(`/categories?${searchQuery}`).then((res) => res.data);
+};
+
+export const categoryAdminReq = async (query?: any) => {
+  const urlParams = {
+    name: query?.get('keyword'),
+    status: query?.get('status'),
+    page: query?.get('page'),
+  };
+  const searchQuery = QueryString.stringify(urlParams, { encode: false });
+  return axios.get(`/categories/admin?${searchQuery}`).then((res) => res.data);
 };
 
 export const getCategoryReq = async (id?: string) =>

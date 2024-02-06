@@ -220,6 +220,29 @@ exports.getProductsClient = asyncHandleError(async (req, res, next) => {
       $unwind: "$product_items",
     },
     {
+      $lookup: {
+        from: "order_lines",
+        foreignField: "product_item_id",
+        localField: "product_items._id",
+        as: "orderLines",
+      },
+    },
+    {
+      $unwind: { preserveNullAndEmptyArrays: true, path: "$orderLines" },
+    },
+    {
+      $lookup: {
+        from: "reviews",
+        foreignField: "ordered_product_id",
+        localField: "orderLines._id",
+        as: "reviews",
+      },
+    },
+    {
+      $unwind: { preserveNullAndEmptyArrays: true, path: "$reviews" },
+    },
+
+    {
       $group: {
         _id: {
           id: "$_id",
@@ -234,6 +257,7 @@ exports.getProductsClient = asyncHandleError(async (req, res, next) => {
         minPrice: { $min: "$product_items.price" },
         maxPrice: { $max: "$product_items.price" },
         sumProducts: { $sum: "$product_items.qty_in_stock" },
+        avgReviews: { $avg: "$reviews.rating_value" },
       },
     },
     {
@@ -248,11 +272,11 @@ exports.getProductsClient = asyncHandleError(async (req, res, next) => {
         createdAt: "$_id.createdAt",
         min: "$minPrice",
         max: "$maxPrice",
+        avgReviews: 1,
         count: "$sumProducts",
         _id: null,
       },
     },
-
     {
       $addFields: {
         category_id: "$category._id",

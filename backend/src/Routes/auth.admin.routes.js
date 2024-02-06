@@ -18,9 +18,13 @@ const {
   getAddress,
   updateAddress,
   deleteAddress,
+  resetPassword,
+  getNofitications,
 } = require("../Controllers/auth.controller");
 const { authRequired, isAdmin } = require("../Middlewares/auth.middleware");
+router.get("/nofitications", authRequired, getNofitications);
 
+router.post("/reset-password", authRequired, resetPassword);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/login-admin", loginAdmin);

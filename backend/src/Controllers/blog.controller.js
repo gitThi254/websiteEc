@@ -12,7 +12,7 @@ exports.createBlog = asyncHandleError(async (req, res, next) => {
 });
 
 exports.getBlogs = asyncHandleError(async (req, res, next) => {
-  const { title, category, author } = req.query;
+  const { title, category, author, page } = req.query;
   // const blogs = await Blog.find().populate("category author");
   const blogs = await Blog.aggregate([
     {
@@ -74,8 +74,52 @@ exports.getBlogs = asyncHandleError(async (req, res, next) => {
         createdAt: -1,
       },
     },
+    {
+      $skip: (Number(page ? page : 1) - 1) * 5,
+    },
+    {
+      $limit: 5,
+    },
   ]);
-  res.json(blogs);
+  const totalPage = await Blog.aggregate([
+    {
+      $lookup: {
+        from: "categories",
+        foreignField: "_id",
+        localField: "category",
+        as: "category_name",
+      },
+    },
+    {
+      $unwind: "$category_name",
+    },
+    {
+      $addFields: {
+        author: "$author.firstname",
+        category_name: "$category_name.category_name",
+      },
+    },
+    {
+      $match: {
+        title: {
+          $regex: `.*${title ? title : ""}.*`,
+          $options: "i",
+        },
+      },
+    },
+    {
+      $match: category
+        ? {
+            category: new mongoose.Types.ObjectId(category),
+          }
+        : {},
+    },
+    {
+      $count: "count_blogs",
+    },
+  ]);
+
+  res.json({ blogs, totalPage: totalPage[0]?.count_blogs });
 });
 
 exports.getBlog = asyncHandleError(async (req, res, next) => {

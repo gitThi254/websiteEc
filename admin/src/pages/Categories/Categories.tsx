@@ -1,17 +1,19 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumb';
-import { useCategories, useDeleteCategory } from '../../hooks/category.hook';
+import { useCategoriesAdmin } from '../../hooks/category.hook';
 import Loader from '../../common/Loader';
 import Search from '../../components/btn/Search';
 import { useState } from 'react';
 import ModelGroupCategory from '../../components/Model/ModelGroupCategory';
 import Category from './Category';
 import Meta from '../../components/Meta/Meta';
+import Pagination_page from '../../components/Pagination_page_category';
+import SearchNotFound from '../../components/SearchNotFound';
+import Empty from '../../components/Empty';
 
 const Categories = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { data: categories, isPending } = useCategories(searchParams);
+  const { data: categories, isPending } = useCategoriesAdmin(searchParams);
   if (isPending) return <Loader />;
   return (
     <>
@@ -65,33 +67,46 @@ const Categories = () => {
               Thêm khuyến mãi
             </Link>
           </div>
-
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                  Tên
-                </th>
-                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Ngày lập
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Mục sản phẩm cha
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  khuyến mại
-                </th>
-                <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Lựa chọn
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories?.map((item: any) => (
-                <Category item={item} key={item._id} />
-              ))}
-            </tbody>
-          </table>
+          {categories?.categories?.length !== 0 ? (
+            <>
+              <table className="w-full table-auto">
+                <thead>
+                  <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                    <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                      Tên
+                    </th>
+                    <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                      Ngày lập
+                    </th>
+                    <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                      Mục sản phẩm cha
+                    </th>
+                    <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                      khuyến mại
+                    </th>
+                    <th className="py-4 px-4 font-medium text-black dark:text-white">
+                      Lựa chọn
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories?.categories?.map((item: any) => (
+                    <Category item={item} key={item._id} />
+                  ))}
+                </tbody>
+              </table>
+              <Pagination_page
+                itemsPerPage={6}
+                items={categories.totalPage ?? 0}
+                setSearch={setSearchParams}
+                search={searchParams}
+              />
+            </>
+          ) : searchParams.size !== 0 ? (
+            <SearchNotFound />
+          ) : (
+            <Empty title="Mục sản phẩm hàng trống" />
+          )}
         </div>
       </div>
       <ModelGroupCategory
@@ -100,7 +115,7 @@ const Categories = () => {
         button="Tạo sản phẩm"
         open={isOpen}
         setOpen={setIsOpen}
-        category={categories}
+        category={categories.categories}
       />
     </>
   );

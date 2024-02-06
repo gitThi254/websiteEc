@@ -4,6 +4,7 @@ export const blogsReq = async (query?: any) => {
   const urlParams = {
     title: query?.get('keyword'),
     category: query?.get('category'),
+    page: query?.get('page'),
   };
   const searchQuery = QueryString.stringify(urlParams, { encode: false });
   return axios.get(`/blogs?${searchQuery}`).then((res) => res.data);

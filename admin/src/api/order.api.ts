@@ -4,6 +4,7 @@ export const getAllOrdersReq = async (query?: any) => {
   const urlParams = {
     name: query?.get('keyword'),
     status: query?.get('status'),
+    page: query?.get('page'),
   };
   const searchQuery = qs.stringify(urlParams, { encode: false });
   return axios

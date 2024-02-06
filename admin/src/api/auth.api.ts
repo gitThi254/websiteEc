@@ -13,17 +13,15 @@ export const getUsersReq = async (query?: any) => {
   const urlParams = {
     name: query?.get('keyword'),
     role: query?.get('role'),
+    page: query?.get('page'),
   };
   const searchQuery = qs.stringify(urlParams, { encode: false });
   return axios.get(`/users/all-users?${searchQuery}`).then((res) => {
     return res.data;
   });
-  return axios.get('/users/all-users').then((res) => {
-    return res.data;
-  });
 };
 
 export const logoutReq = async () =>
-  axios.post('/users/logout').catch((err) => {
+  axios.post('/users/logout').catch(() => {
     console.log('error');
   });

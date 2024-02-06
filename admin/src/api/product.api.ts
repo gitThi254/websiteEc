@@ -5,6 +5,7 @@ export const productsReq = async (query?: any) => {
   const urlParams = {
     name: query?.get('keyword'),
     category: query?.get('category'),
+    page: query?.get('page'),
     price: query?.get('price'),
   };
   const searchQuery = QueryString.stringify(urlParams, { encode: false });

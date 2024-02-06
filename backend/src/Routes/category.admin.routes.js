@@ -6,6 +6,7 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
+  getCategoriesAdmin,
 } = require("../Controllers/category.controller");
 const {
   createPromotion,
@@ -35,6 +36,8 @@ router
   .route("/")
   .post(authRequired, isAdmin, createCategory)
   .get(authRequired, getCategories);
+
+router.route("/admin").get(authRequired, getCategoriesAdmin);
 
 router
   .route("/:id")

@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {
+  categoryAdminReq,
   categoryCreateReq,
   categoryReq,
   createPromotionReq,
@@ -39,6 +40,13 @@ export const useCategories = (query?: any) => {
   });
 };
 
+export const useCategoriesAdmin = (query?: any) => {
+  return useQuery({
+    queryKey: ['categories', 'admin', query?.toString()],
+    queryFn: () => categoryAdminReq(query),
+    placeholderData: keepPreviousData,
+  });
+};
 export const useCategory = (id?: string) => {
   return useQuery({
     queryKey: ['categories', id],

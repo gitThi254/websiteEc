@@ -25,10 +25,10 @@ const Category = ({ item }: { item: any }) => {
         </td>
         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
           <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
-            {item?.promotion?.name ?? 'No Promotion'}
+            {item?.eventPromotion?.name ?? 'No Promotion'}
           </p>
         </td>
-        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+        <td className="border-b border-[#eee] py-5 px-4 dark:border-stProkedark">
           <div className="flex items-center space-x-3.5">
             <Link
               to={`/categories/${item._id}/variations`}
