@@ -95,7 +95,6 @@ exports.TopfiveProductBestSell = asyncHandleError(async (req, res, next) => {
 
 exports.getProducts = asyncHandleError(async (req, res, next) => {
   const { name, category, price, page } = req.query;
-  console.log({ name, category, price, page });
   const search = name ? removeVietnameseTones(name) : undefined;
   const products = await Product.aggregate([
     {
@@ -168,6 +167,14 @@ exports.getProducts = asyncHandleError(async (req, res, next) => {
       },
     },
     {
+      $match: {
+        search: {
+          $regex: `.*${search ? search : ""}.*`,
+          $options: "i",
+        },
+      },
+    },
+    {
       $match: category
         ? {
             category_id: new mongoose.Types.ObjectId(category),
@@ -175,24 +182,28 @@ exports.getProducts = asyncHandleError(async (req, res, next) => {
         : {},
     },
     {
-      $sort: price ? { min: Number(price) } : { createdAt: -1 },
-    },
-    {
-      $skip: (Number(page ? page : 1) - 1) * 6,
-    },
-    {
-      $limit: 6,
+      $facet: {
+        data: [
+          {
+            $sort: price ? { min: Number(price) } : { createdAt: -1 },
+          },
+          {
+            $skip: (Number(page ? page : 1) - 1) * 6,
+          },
+
+          {
+            $limit: 6,
+          },
+        ],
+        totalPage: [
+          {
+            $count: "total",
+          },
+        ],
+      },
     },
   ]);
-
-  const totalPage = await Product.countDocuments({
-    nameSearch: {
-      $regex: `.*${search ? search : ""}.*`,
-      $options: "i",
-    },
-    ...(category ? { category_id: new mongoose.Types.ObjectId(category) } : {}),
-  });
-  res.json({ products, totalPage });
+  res.json(products);
 });
 
 exports.getProductsClient = asyncHandleError(async (req, res, next) => {

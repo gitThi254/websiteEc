@@ -124,43 +124,30 @@ exports.getallUser = asyncHandleError(async (req, res, next) => {
       },
     },
     {
-      $sort: {
-        createdAt: -1,
+      $facet: {
+        data: [
+          {
+            $sort: {
+              createdAt: -1,
+            },
+          },
+          {
+            $skip: (Number(page ? page : 1) - 1) * 5,
+          },
+          {
+            $limit: 5,
+          },
+        ],
+        totalPage: [
+          {
+            $count: "total",
+          },
+        ],
       },
-    },
-    {
-      $skip: (Number(page ? page : 1) - 1) * 5,
-    },
-    {
-      $limit: 5,
     },
   ]);
 
-  const totalPage = await User.aggregate([
-    {
-      $addFields: {
-        fullName: {
-          $concat: ["$lastname", " ", "$firstname"],
-        },
-      },
-    },
-    {
-      $match: role
-        ? {
-            role: role,
-          }
-        : {},
-    },
-    {
-      $match: {
-        fullName: { $regex: `.*${name ? name : ""}.*`, $options: "i" },
-      },
-    },
-    {
-      $count: "totalPage",
-    },
-  ]);
-  res.json({ users, totalPage: totalPage[0]?.totalPage });
+  res.json({ data: users[0].data, totalPage: users[0].totalPage[0].total });
 });
 
 exports.getUser = asyncHandleError(async (req, res, next) => {

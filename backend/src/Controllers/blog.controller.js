@@ -12,7 +12,7 @@ exports.createBlog = asyncHandleError(async (req, res, next) => {
 });
 
 exports.getBlogs = asyncHandleError(async (req, res, next) => {
-  const { title, category, author, page } = req.query;
+  const { title, category, author, page, limit } = req.query;
   // const blogs = await Blog.find().populate("category author");
   const blogs = await Blog.aggregate([
     {
@@ -70,56 +70,35 @@ exports.getBlogs = asyncHandleError(async (req, res, next) => {
       },
     },
     {
-      $sort: {
-        createdAt: -1,
+      $facet: {
+        data: [
+          {
+            $sort: {
+              createdAt: -1,
+              category: -1,
+            },
+          },
+          {
+            $skip: (Number(page ? page : 1) - 1) * Number(limit ?? 5),
+          },
+
+          {
+            $limit: Number(limit) ? Number(limit) : 6,
+          },
+        ],
+        totalPage: [
+          {
+            $count: "total",
+          },
+        ],
       },
-    },
-    {
-      $skip: (Number(page ? page : 1) - 1) * 5,
-    },
-    {
-      $limit: 5,
-    },
-  ]);
-  const totalPage = await Blog.aggregate([
-    {
-      $lookup: {
-        from: "categories",
-        foreignField: "_id",
-        localField: "category",
-        as: "category_name",
-      },
-    },
-    {
-      $unwind: "$category_name",
-    },
-    {
-      $addFields: {
-        author: "$author.firstname",
-        category_name: "$category_name.category_name",
-      },
-    },
-    {
-      $match: {
-        title: {
-          $regex: `.*${title ? title : ""}.*`,
-          $options: "i",
-        },
-      },
-    },
-    {
-      $match: category
-        ? {
-            category: new mongoose.Types.ObjectId(category),
-          }
-        : {},
-    },
-    {
-      $count: "count_blogs",
     },
   ]);
 
-  res.json({ blogs, totalPage: totalPage[0]?.count_blogs });
+  res.json({
+    data: blogs[0].data,
+    totalPage: blogs[0]?.totalPage[0]?.total ?? 0,
+  });
 });
 
 exports.getBlog = asyncHandleError(async (req, res, next) => {

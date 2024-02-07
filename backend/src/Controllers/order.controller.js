@@ -566,46 +566,36 @@ exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
       },
     },
     {
-      $sort: {
-        order_date: -1,
-        fullname: -1,
-        order_total: 1,
-        shipping: 1,
-        _id: 1,
+      $facet: {
+        data: [
+          {
+            $sort: {
+              order_date: -1,
+              fullname: -1,
+              order_total: 1,
+              shipping: 1,
+              _id: 1,
+            },
+          },
+          {
+            $skip: (Number(page ? page : 1) - 1) * 5,
+          },
+          {
+            $limit: 5,
+          },
+        ],
+        totalPage: [
+          {
+            $count: "total",
+          },
+        ],
       },
-    },
-    {
-      $skip: (Number(page ? page : 1) - 1) * 5,
-    },
-    {
-      $limit: 5,
-    },
-  ]);
-  const totalPage = await Order.aggregate([
-    {
-      $lookup: {
-        from: "order_lines",
-        localField: "_id",
-        foreignField: "order_id",
-        as: "orderItems",
-      },
-    },
-    {
-      $unwind: "$orderItems",
-    },
-    {
-      $match: status
-        ? {
-            order_status: new mongoose.Types.ObjectId(status),
-          }
-        : {},
-    },
-    {
-      $count: "order_status",
     },
   ]);
 
-  res.status(200).json({ orders, totalPage });
+  res
+    .status(200)
+    .json({ data: orders[0].data, totalPage: orders[0].totalPage[0].total });
 });
 
 exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {
