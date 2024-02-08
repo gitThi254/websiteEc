@@ -203,7 +203,10 @@ exports.getProducts = asyncHandleError(async (req, res, next) => {
       },
     },
   ]);
-  res.json(products);
+  res.json({
+    data: products[0]?.data,
+    totalPage: products[0]?.totalPage[0]?.total,
+  });
 });
 
 exports.getProductsClient = asyncHandleError(async (req, res, next) => {
@@ -334,174 +337,179 @@ exports.getProductsClient = asyncHandleError(async (req, res, next) => {
 
 exports.getProductDetail = asyncHandleError(async (req, res, next) => {
   const { id } = req.params;
-  const product = await Product.aggregate([
-    {
-      $match: { _id: new mongoose.Types.ObjectId(id) },
-    },
-    {
-      $lookup: {
-        from: "product_items",
-        localField: "_id",
-        foreignField: "product_id",
-        as: "product_items",
+  const product = await Product.aggregate(
+    [
+      {
+        $match: { _id: new mongoose.Types.ObjectId(id) },
       },
-    },
-    {
-      $unwind: "$product_items",
-    },
-    {
-      $project: {
-        _id: 1,
-        name: 1,
-        description: 1,
-        product_image: 1,
-        category_id: 1,
-        product_item_id: "$product_items._id",
-        sku: "$product_items.SKU",
-        qty_in_stock: "$product_items.qty_in_stock",
-        price: "$product_items.price",
-        product_image_items: "$product_items.product_image",
+      {
+        $lookup: {
+          from: "product_items",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "product_items",
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "categories",
-        localField: "category_id",
-        foreignField: "_id",
-        as: "category",
+      {
+        $unwind: "$product_items",
       },
-    },
-    {
-      $unwind: "$category",
-    },
-    {
-      $lookup: {
-        from: "variation_options",
-        localField: "product_item_id",
-        foreignField: "product_item_id",
-        as: "variation_options",
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          description: 1,
+          product_image: 1,
+          category_id: 1,
+          product_item_id: "$product_items._id",
+          sku: "$product_items.SKU",
+          qty_in_stock: "$product_items.qty_in_stock",
+          price: "$product_items.price",
+          product_image_items: "$product_items.product_image",
+        },
       },
-    },
-    {
-      $unwind: "$variation_options",
-    },
-    {
-      $project: {
-        id: "$_id",
-        name: 1,
-        description: 1,
-        product_image: 1,
-        product_item_id: 1,
-        product_image_items: 1,
-        category_name: "$category.category_name",
-        sku: 1,
-        qty_in_stock: 1,
-        price: 1,
-        variation_id: "$variation_options.variation_id",
-        value: "$variation_options.value",
-        _id: null,
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "variations",
-        localField: "variation_id",
-        foreignField: "_id",
-        as: "variation",
+      {
+        $unwind: "$category",
       },
-    },
-    {
-      $unwind: "$variation",
-    },
-    {
-      $project: {
-        id: 1,
-        name: 1,
-        description: 1,
-        product_image: 1,
-        product_item_id: 1,
-        product_image_items: 1,
-        category_name: "$category.category_name",
-        sku: 1,
-        qty_in_stock: 1,
-        price: 1,
-        variation_name: "$variation.name",
-        value: "$value",
-        _id: null,
+      {
+        $lookup: {
+          from: "variation_options",
+          localField: "product_item_id",
+          foreignField: "product_item_id",
+          as: "variation_options",
+        },
       },
-    },
-    {
-      $group: {
-        _id: {
-          id: "$id",
-          name: "$name",
-          description: "$description",
-          product_image: "$product_image",
+      {
+        $unwind: "$variation_options",
+      },
+      {
+        $project: {
+          id: "$_id",
+          name: 1,
+          description: 1,
+          product_image: 1,
+          product_item_id: 1,
+          product_image_items: 1,
           category_name: "$category.category_name",
-          product_item_id: "$product_item_id",
-          product_image_items: "$product_image_items",
-          sku: "$sku",
-          qty_in_stock: "$qty_in_stock",
-          price: "$price",
-        },
-        variation_options: {
-          $push: {
-            variation_name: "$variation_name",
-            value: "$value",
-          },
+          sku: 1,
+          qty_in_stock: 1,
+          price: 1,
+          variation_id: "$variation_options.variation_id",
+          value: "$variation_options.value",
+          _id: null,
         },
       },
-    },
-    {
-      $project: {
-        id: "$_id.id",
-        name: "$_id.name",
-        description: "$_id.description",
-        product_image: "$_id.product_image",
-        product_item_id: "$_id.product_item_id",
-        product_image_items: "$_id.product_image_items",
-        category_name: "$_id.category_name",
-        sku: "$_id.sku",
-        qty_in_stock: "$_id.qty_in_stock",
-        price: "$_id.price",
-        variation_options: 1,
-        _id: null,
-      },
-    },
-    { $sort: { sku: 1 } },
-    {
-      $group: {
-        _id: {
-          id: "$id",
-          name: "$name",
-          description: "$description",
-          product_image: "$product_image",
-          category_name: "$category_name",
+      {
+        $lookup: {
+          from: "variations",
+          localField: "variation_id",
+          foreignField: "_id",
+          as: "variation",
         },
-        product_items: {
-          $push: {
+      },
+      {
+        $unwind: "$variation",
+      },
+      {
+        $project: {
+          id: 1,
+          name: 1,
+          description: 1,
+          product_image: 1,
+          product_item_id: 1,
+          product_image_items: 1,
+          category_name: "$category.category_name",
+          sku: 1,
+          qty_in_stock: 1,
+          price: 1,
+          variation_name: "$variation.name",
+          value: "$value",
+          _id: null,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            id: "$id",
+            name: "$name",
+            description: "$description",
+            product_image: "$product_image",
+            category_name: "$category.category_name",
             product_item_id: "$product_item_id",
             product_image_items: "$product_image_items",
             sku: "$sku",
-            price: "$price",
             qty_in_stock: "$qty_in_stock",
-            variations: "$variation_options",
+            price: "$price",
+          },
+          variation_options: {
+            $push: {
+              variation_name: "$variation_name",
+              value: "$value",
+            },
           },
         },
       },
-    },
-    {
-      $project: {
-        id: "$_id.id",
-        name: "$_id.name",
-        description: "$_id.description",
-        product_image: "$_id.product_image",
-        category_name: "$_id.category_name",
-        product_items: 1,
-        _id: null,
+      {
+        $project: {
+          id: "$_id.id",
+          name: "$_id.name",
+          description: "$_id.description",
+          product_image: "$_id.product_image",
+          product_item_id: "$_id.product_item_id",
+          product_image_items: "$_id.product_image_items",
+          category_name: "$_id.category_name",
+          sku: "$_id.sku",
+          qty_in_stock: "$_id.qty_in_stock",
+          price: "$_id.price",
+          variation_options: 1,
+          _id: null,
+        },
       },
-    },
-  ]);
+      { $sort: { sku: 1 } },
+      {
+        $group: {
+          _id: {
+            id: "$id",
+            name: "$name",
+            description: "$description",
+            product_image: "$product_image",
+            category_name: "$category_name",
+          },
+          product_items: {
+            $push: {
+              product_item_id: "$product_item_id",
+              product_image_items: "$product_image_items",
+              sku: "$sku",
+              price: "$price",
+              qty_in_stock: "$qty_in_stock",
+              variations: "$variation_options",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          id: "$_id.id",
+          name: "$_id.name",
+          description: "$_id.description",
+          product_image: "$_id.product_image",
+          category_name: "$_id.category_name",
+          product_items: 1,
+          _id: null,
+        },
+      },
+    ],
+    {
+      allowDiskUse: true,
+    }
+  );
 
   if (!product) return next(not_found("Product", id));
   res.json(product);

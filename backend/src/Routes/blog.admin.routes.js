@@ -7,6 +7,8 @@ const {
   getBlogUser,
   likeBlog,
   disLikeBlog,
+  insertBlogMany,
+  deleteBlogMany,
 } = require("../Controllers/blog.controller");
 const { authRequired, isAdmin } = require("../Middlewares/auth.middleware");
 const router = Router();
@@ -23,5 +25,8 @@ router
   .get(authRequired, getBlog)
   .put(authRequired, isAdmin, updateBlog);
 router.get("/", authRequired, getBlogs);
+
+router.post("/insert-many/:id", authRequired, isAdmin, insertBlogMany);
+router.delete("/delete-many", authRequired, isAdmin, deleteBlogMany);
 
 module.exports = router;

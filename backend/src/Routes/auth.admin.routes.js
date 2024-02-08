@@ -20,6 +20,7 @@ const {
   deleteAddress,
   resetPassword,
   getNofitications,
+  insertUserMany,
 } = require("../Controllers/auth.controller");
 const { authRequired, isAdmin } = require("../Middlewares/auth.middleware");
 router.get("/nofitications", authRequired, getNofitications);
@@ -43,6 +44,7 @@ router
   .delete(authRequired, deleteAddress);
 
 router.route("/country").post(authRequired, isAdmin, createCountry);
+router.route("/insert-many").post(authRequired, isAdmin, insertUserMany);
 
 router
   .route("/:id")

@@ -147,7 +147,7 @@ exports.getallUser = asyncHandleError(async (req, res, next) => {
     },
   ]);
 
-  res.json({ data: users[0].data, totalPage: users[0].totalPage[0].total });
+  res.json({ data: users[0]?.data, totalPage: users[0]?.totalPage[0]?.total });
 });
 
 exports.getUser = asyncHandleError(async (req, res, next) => {
@@ -278,4 +278,62 @@ exports.createCountry = asyncHandleError(async (req, res, next) => {
 exports.getCountries = asyncHandleError(async (req, res, next) => {
   const countries = await Country.find();
   res.status(200).json(countries);
+});
+function generateRandomCustomer() {
+  const firstname = [
+    "Huy",
+    "Long",
+    "Nam",
+    "Trung",
+    "Nguyên",
+    "Vy",
+    "Hùng",
+    "Tùng",
+    "Quang",
+    "Tèo",
+    "Tí",
+    "Minh",
+  ];
+  const randomFirstName =
+    firstname[Math.floor(Math.random() * firstname.length)];
+  const lastname = [
+    "Nguyễn",
+    "Trần",
+    "Đỗ",
+    "Hoàng",
+    "Lâm",
+    "Trung",
+    "Vũ",
+    "Phạm",
+    "Huỳnh",
+    "Phan",
+    "Đặng",
+    "Ngô",
+  ];
+  const randomLastName = lastname[Math.floor(Math.random() * lastname.length)];
+
+  const randomEmail =
+    randomFirstName.toLowerCase() +
+    Math.floor(Math.random() * 10000000) +
+    "@example.com";
+
+  const randomPhoneNumber = Math.floor(Math.random() * 1000000000);
+  const password = "123456";
+  return {
+    firstname: randomFirstName,
+    lastname: randomLastName,
+    email: randomEmail,
+    phone: randomPhoneNumber,
+    password: password,
+  };
+}
+
+exports.insertUserMany = asyncHandleError(async (req, res, next) => {
+  const randomCustomers = [];
+  for (let i = 0; i < 10000; i++) {
+    randomCustomers.push(generateRandomCustomer());
+  }
+  const users = await User.insertMany(randomCustomers);
+
+  res.json(users);
 });

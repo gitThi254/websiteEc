@@ -16,6 +16,7 @@ const Products = () => {
   const { data: category, isPending } = useCategories();
   const { mutate: deleteProductMutation, isPending: pending } =
     useDeleteProduct();
+  console.log(products);
   if (isLoading || pending || isPending) return <Loader />;
   return (
     <>
@@ -47,7 +48,7 @@ const Products = () => {
             </span>
             Tạo sản phẩm
           </Link>
-          {products?.products?.length !== 0 ? (
+          {products?.data?.length !== 0 ? (
             <>
               <div>
                 <table className="w-full table-auto">
@@ -77,7 +78,7 @@ const Products = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {products[0]?.data?.map((item: any) => (
+                    {products?.data?.map((item: any) => (
                       <tr key={item.id}>
                         <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                           <h5 className="font-medium text-black dark:text-white line-clamp-2">

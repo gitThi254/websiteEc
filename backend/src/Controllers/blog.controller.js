@@ -3,6 +3,76 @@ const Blog = require("../Models/blog.model");
 const CustomError = require("../Utils/CustomError");
 const asyncHandleError = require("../Utils/asyncHandleError");
 
+function generateRandomBlog() {
+  const title = ["Xuân", "Hạ", "Thu", "Đông"];
+  const randomTitle =
+    title[Math.floor(Math.random() * title.length)] +
+    Math.floor(Math.random() * 1000000);
+
+  const description =
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio eum odio et voluptatem accusantium doloribus eligendi laudantium nostrum nemo quia amet sequi, ad voluptatum? Ea eius tempora aliquam earum quae.";
+  const randomImages = [
+    {
+      public_id: "yxahex96hbgv0u2qbmrk",
+      url: "https://res.cloudinary.com/dshyra0lz/image/upload/v1707184719/yxahex96hbgv0u2qbmrk.jpg",
+      asset_id: "81b746d69341c65f6262bb6e56094b19",
+    },
+    {
+      public_id: "o6cemy8gno1c4hsz6qjr",
+      url: "https://res.cloudinary.com/dshyra0lz/image/upload/v1706849121/o6cemy8gno1c4hsz6qjr.jpg",
+      asset_id: "bdd2db6ffeea29b1559d343118f83a0e",
+    },
+    {
+      public_id: "esyvb8kt3fo6ygni3bvt",
+      url: "https://res.cloudinary.com/dshyra0lz/image/upload/v1706614151/esyvb8kt3fo6ygni3bvt.jpg",
+      asset_id: "0efc28804566f423b59b7139cc86d6ef",
+      _id: "65b8dd8ac77f0d520ed9d60e",
+    },
+    {
+      public_id: "hsvgxipnz1uyv7ey7iou",
+      url: "https://res.cloudinary.com/dshyra0lz/image/upload/v1706610812/hsvgxipnz1uyv7ey7iou.jpg",
+      asset_id: "f51a42da87a6c718a256251b5f6f8633",
+      _id: "65b8d082c77f0d520ed9d1e4",
+    },
+    {
+      public_id: "xylwm6ggr8rqcpkzuhh5",
+      url: "https://res.cloudinary.com/dshyra0lz/image/upload/v1706610758/xylwm6ggr8rqcpkzuhh5.jpg",
+      asset_id: "90e3d06ec3a4c1bc2a48589c0e9badf5",
+      _id: "65b8d048c77f0d520ed9d1d5",
+    },
+    {
+      public_id: "geceqdwvfxhx9bqiyzxe",
+      url: "https://res.cloudinary.com/dshyra0lz/image/upload/v1706610689/geceqdwvfxhx9bqiyzxe.jpg",
+      asset_id: "7bfe60b4402c808f2cbf395b2514c31c",
+      _id: "65b8d012c77f0d520ed9d1c0",
+    },
+  ];
+
+  const images = randomImages[Math.floor(Math.random() * randomImages.length)];
+  return {
+    title: randomTitle,
+    description: description,
+    images: images,
+  };
+}
+
+exports.insertBlogMany = asyncHandleError(async (req, res, next) => {
+  const { id } = req.params;
+  const { _id } = req.user;
+  const randomBlogs = [];
+  for (let i = 0; i < 10000; i++) {
+    randomBlogs.push({ ...generateRandomBlog(), category: id, author: _id });
+  }
+  const blogs = await Blog.insertMany(randomBlogs);
+
+  res.json(blogs);
+});
+
+exports.deleteBlogMany = asyncHandleError(async (req, res, next) => {
+  const blogs = await Blog.deleteMany({ title: { $regex: /10000/ } });
+  res.json(blogs);
+});
+
 exports.createBlog = asyncHandleError(async (req, res, next) => {
   const { id } = req.params;
   const { _id } = req.user;
@@ -35,7 +105,7 @@ exports.getBlogs = asyncHandleError(async (req, res, next) => {
       },
     },
     {
-      $unwind: "$author",
+      $unwind: { preserveNullAndEmptyArrays: true, path: "$author" },
     },
     {
       $unwind: "$category_name",

@@ -595,7 +595,7 @@ exports.getAllOrderAdmin = asyncHandleError(async (req, res, next) => {
 
   res
     .status(200)
-    .json({ data: orders[0].data, totalPage: orders[0].totalPage[0].total });
+    .json({ data: orders[0]?.data, totalPage: orders[0]?.totalPage[0]?.total });
 });
 
 exports.getOrderAdmin = asyncHandleError(async (req, res, next) => {

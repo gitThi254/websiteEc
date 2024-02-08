@@ -12,6 +12,7 @@ import Empty from '../../components/Empty';
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: users, isPending } = useUsers(searchParams);
+  console.log(users);
   if (isPending) return <Loader />;
   return (
     <>

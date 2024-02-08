@@ -1,3 +1,13 @@
+function m(n: any, d: any) {
+  // Lấy độ dài của số n
+  let x = ('' + n).length;
+  // Tính 10^d
+  let p = Math.pow(10, d);
+  // Làm cho x chia hết cho 3
+  x -= x % 3;
+  // Làm tròn giá trị và thêm hậu tố kMGTPE
+  return Math.round((n * d) / Math.pow(10, x)) / d + ' kMGTPE'[x / 3];
+}
 const CardFour = ({ quantity }: { quantity?: any }) => {
   return (
     <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -28,7 +38,7 @@ const CardFour = ({ quantity }: { quantity?: any }) => {
       <div className="mt-4 flex items-end justify-between">
         <div>
           <h4 className="text-title-md font-bold text-black dark:text-white">
-            {quantity}
+            {m(quantity, 10)}
           </h4>
           <span className="text-sm font-medium">Tổng số lượng người dùng</span>
         </div>
