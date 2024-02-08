@@ -167,7 +167,9 @@ const SignIn = () => {
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign In to Account Admin
+                Sign In to Account Admin <br />
+                Tài khoản admin@gmail.com <br />
+                Mật khẩu: 123456
               </h2>
               <div className="text-danger mb-4">
                 {error?.message[0] ?? undefined}
